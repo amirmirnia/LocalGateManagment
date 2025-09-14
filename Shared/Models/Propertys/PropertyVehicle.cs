@@ -1,9 +1,10 @@
 ﻿using System.Text.Json.Serialization;
+using ServicesGateManagment.Shared.Common;
 using ServicesGateManagment.Shared.Enum;
 
 namespace ServicesGateManagment.Shared.Propertys
 {
-    public class PropertyVehicle
+    public class PropertyVehicle : BaseAuditableEntity
     {
         [JsonPropertyName("propertyId")]
         public int PropertyId { get; set; }

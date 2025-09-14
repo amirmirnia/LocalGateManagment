@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using ServicesGateManagment.Shared.Common;
 using ServicesGateManagment.Shared.Enum;
 using ServicesGateManagment.Shared.Propertys;
 
 namespace ServicesGateManagment.Shared.Vehicles
 {
-    public class Vehicle
+    public class Vehicle 
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }

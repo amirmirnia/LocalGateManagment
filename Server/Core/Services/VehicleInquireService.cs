@@ -8,6 +8,9 @@ using ServicesGateManagment.Shared.Gates;
 using ServicesGateManagment.Shared.Propertys;
 using ServicesGateManagment.Shared.Vehicles;
 using ServicesGateManagment.Shared.Models.Vehicles;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using ServicesGateManagment.Shared.DBContext;
 
 namespace ServicesGateManagment.Server;
 
@@ -17,12 +20,14 @@ public class VehicleInquireService : IVehicleInquireService
     private readonly ILogger<VehicleInquireService> _logger;
     private readonly string _dataDirectory;
     private readonly IWebHostEnvironment _env;
-    public VehicleInquireService(HttpClient httpClient, ILogger<VehicleInquireService> logger, IWebHostEnvironment env)
+    private ApplicationDbContext _db;
+    public VehicleInquireService(HttpClient httpClient, ILogger<VehicleInquireService> logger, IWebHostEnvironment env, ApplicationDbContext db)
     {
         _httpClient = httpClient;
         _logger = logger;
         _dataDirectory = Path.Combine(Directory.GetCurrentDirectory(), "InquireData");
         _env = env;
+        _db = db;
         if (!Directory.Exists(_dataDirectory))
         {
             Directory.CreateDirectory(_dataDirectory);
@@ -87,6 +92,8 @@ public class VehicleInquireService : IVehicleInquireService
         try
         {
             _logger.LogInformation($"Processing vehicle inquire for gate: {request.Gate}, Reference: {request.ReferenceId}");
+
+            
 
             // خواندن Vehicles از فایل JSON
             string vehicleFilePath = Path.Combine(_env.ContentRootPath, "FetchedData", "data.json");
@@ -183,8 +190,8 @@ public class VehicleInquireService : IVehicleInquireService
                 Plate = plaque.Plaque,
                 Color = car.CarColor,
                 Class = car.CarClass,
-                Gate = gate,
-                Vehicle = vehicle,
+                GateId = gate.Id,
+                VehicleId = vehicle.Id,
                 Type = gate.InquireType,
                 GateValidation = gateValidation,
                 ReferenceId = request.ReferenceId, // اصلاح: استفاده از request.ReferenceId
@@ -301,13 +308,9 @@ public class VehicleInquireService : IVehicleInquireService
             //}
 
             // افزودن VehicleInquire به لیست
-            //vehicleInquires.Add(entity);
+            _db.Add(entity);
+            await _db.SaveChangesAsync(cancellationToken);
 
-            //// ذخیره تغییرات در فایل‌های JSON
-            //await SaveJsonFileAsync(vehicleFilePath, vehicles, cancellationToken);
-            //await SaveJsonFileAsync(vehicleInquiresFilePath, vehicleInquires, cancellationToken);
-            //await SaveJsonFileAsync(vehicleExitBlacklistFilePath, vehicleExitBlacklist, cancellationToken);
-            //await SaveJsonFileAsync(vehicleViolationsFilePath, vehicleViolations, cancellationToken);
 
             return new VehicleInquireResultVm()
             {

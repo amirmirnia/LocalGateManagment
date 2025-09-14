@@ -1,11 +1,16 @@
-using Microsoft.AspNetCore.ResponseCompression;
+﻿using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Services.BackGround;
 using ServicesGateManagment.Server;
+using ServicesGateManagment.Shared.DBContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -30,6 +35,24 @@ builder.Services.AddHostedService<DataFetcherBackgroundService>();
 
 
 var app = builder.Build();
+
+
+// ایجاد و به‌روزرسانی دیتابیس
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        // اعمال Migrationها و ایجاد دیتابیس در صورت عدم وجود
+        dbContext.Database.EnsureCreated();
+    }
+    catch (Exception ex)
+    {
+        // لاگ کردن خطا در صورت بروز مشکل
+        Console.WriteLine($"An error occurred while migrating the database: {ex.Message}");
+    }
+}
+
 
 
 // Configure the HTTP request pipeline.

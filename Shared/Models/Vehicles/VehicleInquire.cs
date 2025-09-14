@@ -18,10 +18,10 @@ namespace ServicesGateManagment.Shared.Models.Vehicles
         public string Class { get; set; }
 
         public int GateId { get; set; }
-        public Gate Gate { get; set; } = null!;
+        //public Gate Gate { get; set; } = null!;
 
         public int? VehicleId { get; set; }
-        public Vehicle Vehicle { get; set; } = null!;
+        //public Vehicle Vehicle { get; set; } = null!;
 
         public int? PropertyVehicleId { get; set; }
         public PropertyVehicle PropertyVehicle { get; set; } = null!;
@@ -37,6 +37,6 @@ namespace ServicesGateManagment.Shared.Models.Vehicles
         public string ReferenceId { get; set; } = string.Empty;
 
         public int? PreviousInquireId { get; set; }
-        public VehicleInquire PreviousInquire { get; set; } = null!;
+        //public VehicleInquire PreviousInquire { get; set; } = null!;
     }
 }
