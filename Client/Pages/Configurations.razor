@@ -1,0 +1,277 @@
+@page "/configurations"
+@using ServicesGateManagment.Shared
+@using ServicesGateManagment.Client.Services
+@inject ILogger<Configurations> Logger
+@inject ConfigService ConfigService
+
+<PageTitle>API Configurations</PageTitle>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Background Service Configuration</h4>
+                </div>
+                <div class="card-body">
+                    <h5>Add New Configuration</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" @bind="newConfig.ApiEndpoint" 
+                                   placeholder="API Endpoint" />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" @bind="newConfig.IntervalMinutes" 
+                                   placeholder="Interval (minutes)" min="1" />
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" @bind="newConfig.FileName" 
+                                   placeholder="File Name (.json)" />
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" @bind="newConfig.IsEnabled" id="enableNew">
+                                <label class="form-check-label" for="enableNew">
+                                    Enable
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-success" @onclick="AddConfiguration">
+                                Add Configuration
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(message))
+                    {
+                        <div class="alert @(isError ? "alert-danger" : "alert-success") mt-3" role="alert">
+                            @message
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5>Active Configurations</h5>
+                        <button class="btn btn-sm btn-primary" @onclick="LoadConfigurations">
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (configurations.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>File Name</th>
+                                    <th>API Endpoint</th>
+                                    <th>Interval</th>
+                                    <th>Status</th>
+                                    <th>Last Fetch</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var config in configurations)
+                                {
+                                    <tr>
+                                        <td>@config.FileName</td>
+                                        <td>
+                                            <small>@config.ApiEndpoint</small>
+                                        </td>
+                                        <td>@config.IntervalMinutes min</td>
+                                        <td>
+                                            @if (config.IsEnabled)
+                                            {
+                                                <span class="badge bg-success">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (config.LastFetchTime.HasValue)
+                                            {
+                                                <small>@config.LastFetchTime.Value.ToString("yyyy-MM-dd HH:mm:ss")</small>
+                                            }
+                                            else
+                                            {
+                                                <small>Never</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning" 
+                                                    @onclick="() => ToggleConfiguration(config)">
+                                                @(config.IsEnabled ? "Disable" : "Enable")
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" 
+                                                    @onclick="() => DeleteConfiguration(config.FileName)">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No configurations found. Add one above to get started.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Service Settings</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Configuration File Location:</strong> 
+                        <code>Configurations/api-configs.txt</code>
+                    </p>
+                    <p>
+                        <strong>Service Settings File:</strong> 
+                        <code>Configurations/service-settings.txt</code>
+                    </p>
+                    <p>
+                        <strong>Data Output Directory:</strong> 
+                        <code>FetchedData/</code>
+                    </p>
+                    <p class="text-muted">
+                        <small>
+                            The background service checks for configuration changes every interval specified in service-settings.txt (default: 30 seconds).
+                            Edit the CheckInterval value in service-settings.txt to change this.
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<ApiConfiguration> configurations = new();
+    private ApiConfiguration newConfig = new() 
+    { 
+        IntervalMinutes = 1,
+        FileName = "data.json",
+        ApiEndpoint = "/api/access/vehicles/access-info",
+        IsEnabled = true
+    };
+    private string message = string.Empty;
+    private bool isError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadConfigurations();
+    }
+
+    private async Task LoadConfigurations()
+    {
+        try
+        {
+            configurations = await ConfigService.LoadConfigurationsAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading configurations");
+            ShowMessage("Error loading configurations", true);
+        }
+    }
+
+    private async Task AddConfiguration()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(newConfig.ApiEndpoint))
+            {
+                ShowMessage("Please enter an API endpoint", true);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(newConfig.FileName))
+            {
+                ShowMessage("Please enter a file name", true);
+                return;
+            }
+
+            if (!newConfig.FileName.EndsWith(".json"))
+            {
+                newConfig.FileName += ".json";
+            }
+
+            // Check if configuration already exists
+            var existing = configurations.FirstOrDefault(c => c.FileName == newConfig.FileName);
+            if (existing != null)
+            {
+                ShowMessage($"Configuration for {newConfig.FileName} already exists", true);
+                return;
+            }
+
+            newConfig.CreatedAt = DateTime.Now;
+            await ConfigService.SaveConfigurationAsync(newConfig);
+            
+            ShowMessage($"Configuration added for {newConfig.FileName}", false);
+            
+            // Reset form
+            newConfig = new() 
+            { 
+                IntervalMinutes = 1,
+                FileName = "data.json",
+                ApiEndpoint = "/api/access/vehicles/access-info",
+                IsEnabled = true
+            };
+            
+            await LoadConfigurations();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error adding configuration");
+            ShowMessage($"Error: {ex.Message}", true);
+        }
+    }
+
+    private async Task ToggleConfiguration(ApiConfiguration config)
+    {
+        try
+        {
+            config.IsEnabled = !config.IsEnabled;
+            await ConfigService.UpdateConfigurationAsync(config.FileName, config);
+            
+            ShowMessage($"{config.FileName} has been {(config.IsEnabled ? "enabled" : "disabled")}", false);
+            await LoadConfigurations();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error toggling configuration");
+            ShowMessage($"Error: {ex.Message}", true);
+        }
+    }
+
+    private async Task DeleteConfiguration(string fileName)
+    {
+        try
+        {
+            await ConfigService.DeleteConfigurationAsync(fileName);
+            ShowMessage($"{fileName} has been deleted", false);
+            await LoadConfigurations();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error deleting configuration");
+            ShowMessage($"Error: {ex.Message}", true);
+        }
+    }
+
+    private void ShowMessage(string msg, bool error)
+    {
+        message = msg;
+        isError = error;
+    }
+}

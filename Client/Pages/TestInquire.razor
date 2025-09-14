@@ -1,0 +1,481 @@
+@page "/test-inquire"
+@using ServicesGateManagment.Shared
+@using Newtonsoft.Json
+@inject HttpClient Http
+@using ServicesGateManagment.Client.Services
+@using ServicesGateManagment.Shared.Models.Common
+@inject ConfigService ConfigService
+@inject IVehicleService _vehicle
+@inject IJSRuntime JSRuntime
+@inject ILogger<Index> Logger
+
+<PageTitle>Test Vehicle Inquire API</PageTitle>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4>Test Vehicle Inquire API</h4>
+                </div>
+                <div class="card-body">
+                   @*  <div class="mb-3">
+                        <label for="apiEndpoint" class="form-label">API Endpoint</label>
+                        <input type="text" class="form-control" id="apiEndpoint" @bind="apiEndpoint"
+                        placeholder="Enter API endpoint (e.g., https://localhost:7125/api/VehicleInquire/inquire)" />
+                    </div> *@
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Gate ID</label>
+                            <input type="text" class="form-control" @bind="gateId" placeholder="Gate GUID" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Reference ID</label>
+                            <input type="text" class="form-control" @bind="referenceId" placeholder="Reference ID" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">timestamp</label>
+                            <input type="text" class="form-control" @bind="timestamp" placeholder="timestamp" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">hotSpotId</label>
+                            <input type="text" class="form-control" @bind="hotSpotId" placeholder="hotSpotId" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Vehicle Plate</label>
+                            <input type="text" class="form-control" @bind="vehiclePlate" placeholder="33Be38192"
+                            maxlength="9" />
+                            <small class="form-text text-muted">Format: 2 digits + 1 letter + 3 digits + 2 digits</small>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">plaqueType</label>
+                            <input type="text" class="form-control" @bind="plaqueType" placeholder="IR" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">plaqueImage</label>
+                            <input type="text" class="form-control" @bind="plaqueImage" placeholder="Base64" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">CarImage</label>
+                            <input type="text" class="form-control" @bind="CarImage" placeholder="Base64" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Car Color</label>
+                            <input type="text" class="form-control" @bind="carColor" placeholder="1-2-3" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Car Class</label>
+                            <input type="text" class="form-control" @bind="carClass" placeholder="1-2-3" />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">CameraSnapshotBase64</label>
+                            <input type="text" class="form-control" @bind="CameraSnapshotBase64" placeholder="Base64" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mb-3">
+                        <button class="btn btn-primary" @onclick="SendInquireRequestApi" disabled="@isLoading">
+                            @if (isLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                <span>Processing...</span>
+                            }
+                            else
+                            {
+                                <span>Send InquireApi Request</span>
+                            }
+                        </button>
+                        <button class="btn btn-primary" @onclick="SendInquireRequestLocal" disabled="@isLoading">
+                            @if (isLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                <span>Processing...</span>
+                            }
+                            else
+                            {
+                                <span>Send Inquire Request</span>
+                            }
+                        </button>
+                        <button class="btn btn-secondary" @onclick="FillSampleData">
+                            Fill Sample Data
+                        </button>
+
+                        <button class="btn btn-warning" @onclick="ClearForm">
+                            Clear
+                        </button>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <strong>Error:</strong> @errorMessage
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @successMessage
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (result != null)
+            {
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h5>Inquiry Result</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Has Valid Access:</strong></td>
+                                        <td>
+                                            @if (result.HasValidAccess)
+                                            {
+                                                <span class="badge bg-success">Yes</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">No</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Gate Validation:</strong></td>
+                                        <td>
+                                            @if (result.GateValidation)
+                                            {
+                                                <span class="badge bg-success">Passed</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Failed</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Arm Action:</strong></td>
+                                        <td><span class="badge bg-info">@result.ArmAction</span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Unauthorized Entry:</strong></td>
+                                        <td>
+                                            @if (result.UnAuthorizedEntry)
+                                            {
+                                                <span class="badge bg-warning">Yes</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">No</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Over Stayed:</strong></td>
+                                        <td>
+                                            @if (result.OverStayed)
+                                            {
+                                                <span class="badge bg-warning">Yes</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">No</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>In Blacklist:</strong></td>
+                                        <td>
+                                            @if (result.InBlackList)
+                                            {
+                                                <span class="badge bg-danger">Yes</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">No</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(requestJson))
+            {
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6>Request JSON (for reference)</h6>
+                    </div>
+                    <div class="card-body">
+                        <pre class="bg-light p-3" style="max-height: 300px; overflow-y: auto; font-size: 0.8rem;">@requestJson</pre>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private string apiEndpoint = "https://localhost:7125/api/VehicleInquire/inquire";
+    private string hotSpotId = string.Empty;
+    private string gateId = string.Empty;
+    private string referenceId = string.Empty;
+    private string vehiclePlate = string.Empty;
+    private string carColor = string.Empty;
+    private string carClass = string.Empty;
+    private string plaqueType = "IR";
+    private string plaqueImage = string.Empty;
+    private string CarImage = string.Empty;
+    private string CameraSnapshotBase64 = string.Empty;
+
+
+    private long timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+    private VehicleInquireResultVm? result;
+    private string errorMessage = string.Empty;
+    private string successMessage = string.Empty;
+    private string requestJson = string.Empty;
+    private bool isLoading = false;
+
+    private void FillSampleData()
+    {
+        gateId = "77d787ba-3f0c-472d-ae36-ec7f45ced52f";
+        referenceId = "cde0565a-806b-4695-b469-d18573ff2a6f";
+        vehiclePlate = "33c38192";
+        carColor = "1";
+        carClass = "2";
+        hotSpotId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+        timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        plaqueImage = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCg";
+        CarImage = "/5h/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBfdfdfdfwYIChAKCg";
+        CameraSnapshotBase64 = "/4efe/4AAQSkZJRgABAQAAAQABAAD/2wBDfefefAAYEBQYFBAYGBQYHBwYIChAKCg/4efe/4AAQSkZJRgABAQAAAQABAAD/2wBDfefefAAYEBQYFBAYGBQYHBwYIChAKCg";
+        plaqueType = "IR";
+    }
+
+    private void ClearForm()
+    {
+        gateId = string.Empty;
+        referenceId = string.Empty;
+        vehiclePlate = string.Empty;
+        carColor = string.Empty;
+        carClass = string.Empty;
+        result = null;
+        errorMessage = string.Empty;
+        successMessage = string.Empty;
+        requestJson = string.Empty;
+        plaqueImage = string.Empty;
+        CameraSnapshotBase64 = string.Empty;
+        CarImage = string.Empty;
+        plaqueType = string.Empty;
+        hotSpotId = string.Empty;
+        long timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+    }
+
+    private async Task SendInquireRequestApi()
+    {
+        errorMessage = string.Empty;
+        successMessage = string.Empty;
+        isLoading = true;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(gateId) || !Guid.TryParse(gateId, out var parsedGateId))
+            {
+                errorMessage = "Please enter a valid Gate ID (GUID format)";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(vehiclePlate) || vehiclePlate.Length != 8)
+            {
+                errorMessage = "Please enter a valid vehicle plate (8 characters: 33Be38192)";
+                return;
+            }
+
+            var requestJson = new CreateVehicleInquireRequest
+                {
+                    Gate = parsedGateId,
+                    ReferenceId = string.IsNullOrWhiteSpace(referenceId) ? Guid.NewGuid().ToString() : referenceId,
+                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    CameraSnapshotBase64 = CameraSnapshotBase64,
+                    HotSpotId = "TestHotSpot",
+                    Cars = new List<InquireVehicleDto>
+                {
+                    new InquireVehicleDto
+                    {
+                        CarClass = carClass,
+                        CarColor = carColor,
+                        CarImage=CarImage,
+                        CarDetectionBox=new List<DetectionBoxDto>
+                        {
+                            new DetectionBoxDto
+                            {
+                                 X=224,
+                                 Y=109
+                            },
+                             new DetectionBoxDto
+                            {
+                                 X=325,
+                                 Y=134
+                            }
+                        },
+                        DetectedPlaques = new List<DetectedPlatesDto>
+                        {
+                            new DetectedPlatesDto
+                            {
+                                Plaque = vehiclePlate,
+                                PlaqueType = plaqueType,
+                                PlaqueImage=plaqueImage,
+                                Rectangle=new List<DetectionBoxDto>
+                                {
+                                     new DetectionBoxDto
+                                     {
+                                         X=1434,
+                                         Y=227
+                                     },
+                                     new DetectionBoxDto
+                                     {
+                                         X=1746,
+                                         Y=291
+                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+                };
+
+            result = await _vehicle.CreateVehicleInquireApi(apiEndpoint, requestJson);
+
+            if (result!=null)
+            {
+                successMessage = $"Request processed successfully! Access: {(result?.HasValidAccess == true ? "Granted" : "Denied")}";
+            }
+            else
+            {
+                errorMessage = $"API Error (not found)";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+            Logger.LogError(ex, "Error sending inquire request");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task SendInquireRequestLocal()
+    {
+        errorMessage = string.Empty;
+        successMessage = string.Empty;
+        isLoading = true;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(gateId) || !Guid.TryParse(gateId, out var parsedGateId))
+            {
+                errorMessage = "Please enter a valid Gate ID (GUID format)";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(vehiclePlate) || vehiclePlate.Length != 8)
+            {
+                errorMessage = "Please enter a valid vehicle plate (8 characters: 33Be38192)";
+                return;
+            }
+
+            var requestJson = new CreateVehicleInquireRequest
+                {
+                    Gate = parsedGateId,
+                    ReferenceId = string.IsNullOrWhiteSpace(referenceId) ? Guid.NewGuid().ToString() : referenceId,
+                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    CameraSnapshotBase64 = CameraSnapshotBase64,
+                    HotSpotId = "TestHotSpot",
+                    Cars = new List<InquireVehicleDto>
+                {
+                    new InquireVehicleDto
+                    {
+                        CarClass = carClass,
+                        CarColor = carColor,
+                        CarImage=CarImage,
+                        CarDetectionBox=new List<DetectionBoxDto>
+                        {
+                            new DetectionBoxDto
+                            {
+                                 X=224,
+                                 Y=109
+                            },
+                             new DetectionBoxDto
+                            {
+                                 X=325,
+                                 Y=134
+                            }
+                        },
+                        DetectedPlaques = new List<DetectedPlatesDto>
+                        {
+                            new DetectedPlatesDto
+                            {
+                                Plaque = vehiclePlate,
+                                PlaqueType = plaqueType,
+                                PlaqueImage=plaqueImage,
+                                Rectangle=new List<DetectionBoxDto>
+                                {
+                                     new DetectionBoxDto
+                                     {
+                                         X=1434,
+                                         Y=227
+                                     },
+                                     new DetectionBoxDto
+                                     {
+                                         X=1746,
+                                         Y=291
+                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+                };
+
+            result = await _vehicle.CreateVehicleInquire(requestJson);
+
+            if (result != null)
+            {
+                successMessage = $"Request processed successfully! Access: {(result?.HasValidAccess == true ? "Granted" : "Denied")}";
+            }
+            else
+            {
+                errorMessage = $"API Error (not found)";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+            Logger.LogError(ex, "Error sending inquire request");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+       
+    }
+}

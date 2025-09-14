@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "title": "ورود",
+    "needValidAccess": true,
+    "checkUnauthorizedEntry": false,
+    "guid": "77d787ba-3f0c-472d-ae36-ec7f45ced52f",
+    "armActionOnSuccess": 1,
+    "armActionOnFailed": 3,
+    "inquireType": 0,
+    "type": 0,
+    "objectType": 0,
+    "gateAreaId": 1,
+    "gateArea": {
+      "id": 1,
+      "title": "بخش 1",
+      "guid": "ed4cb36a-323a-4e48-95e2-0b35eac8a716",
+      "createdBy": null,
+      "createdUtc": "2025-08-17T23:55:25.7275646",
+      "lastModifiedBy": null,
+      "lastModifiedUtc": "2025-08-17T23:55:25.7275646"
+    },
+    "createdBy": null,
+    "createdUtc": "2025-08-17T23:55:25.8500627",
+    "lastModifiedBy": null,
+    "lastModifiedUtc": "2025-08-17T23:55:25.8500627"
+  },
+  {
+    "id": 2,
+    "title": "کنترل ورود",
+    "needValidAccess": false,
+    "checkUnauthorizedEntry": true,
+    "guid": "c71a6bd3-1ec1-432a-aee5-54bd8516ca0b",
+    "armActionOnSuccess": 0,
+    "armActionOnFailed": 0,
+    "inquireType": 1,
+    "type": 2,
+    "objectType": 0,
+    "gateAreaId": 1,
+    "gateArea": {
+      "id": 1,
+      "title": "بخش 1",
+      "guid": "ed4cb36a-323a-4e48-95e2-0b35eac8a716",
+      "createdBy": null,
+      "createdUtc": "2025-08-17T23:55:25.7275646",
+      "lastModifiedBy": null,
+      "lastModifiedUtc": "2025-08-17T23:55:25.7275646"
+    },
+    "createdBy": null,
+    "createdUtc": "2025-08-17T23:55:25.8500625",
+    "lastModifiedBy": null,
+    "lastModifiedUtc": "2025-08-17T23:55:25.8500625"
+  },
+  {
+    "id": 3,
+    "title": "خروج",
+    "needValidAccess": false,
+    "checkUnauthorizedEntry": false,
+    "guid": "9c7679f8-9b9c-46f0-bc9f-34c83ae3af13",
+    "armActionOnSuccess": 1,
+    "armActionOnFailed": 3,
+    "inquireType": 0,
+    "type": 1,
+    "objectType": 0,
+    "gateAreaId": 2,
+    "gateArea": {
+      "id": 2,
+      "title": "بخش 2",
+      "guid": "a7e5ca33-3e2e-4736-97a4-560ff80e31dc",
+      "createdBy": null,
+      "createdUtc": "2025-08-17T23:55:25.7275648",
+      "lastModifiedBy": null,
+      "lastModifiedUtc": "2025-08-17T23:55:25.7275648"
+    },
+    "createdBy": null,
+    "createdUtc": "2025-08-17T23:55:25.8500623",
+    "lastModifiedBy": null,
+    "lastModifiedUtc": "2025-08-17T23:55:25.8500623"
+  }
+]

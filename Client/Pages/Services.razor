@@ -1,0 +1,481 @@
+@page "/services"
+@using ServicesGateManagment.Client.Services
+@inject ConfigService ConfigService
+@inject IJSRuntime JSRuntime
+@inject ILogger<Services> Logger
+
+<PageTitle>Services Gate Management - Services</PageTitle>
+
+<div class="page-header">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="page-title">Services Management</h1>
+            <div class="breadcrumb">
+                <span class="breadcrumb-item">Home</span>
+                <span class="breadcrumb-item active">Services</span>
+            </div>
+        </div>
+        <div class="flex gap-sm">
+            <button class="btn btn-primary" @onclick="AddNewService">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                </svg>
+                Add Service
+            </button>
+            <button class="btn btn-outline" @onclick="ExportServices">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                </svg>
+                Export
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="services-content">
+    <!-- Filters and Search -->
+    <div class="card mb-lg">
+        <div class="card-body">
+            <div class="grid grid-cols-4 gap-md">
+                <div class="form-group">
+                    <label class="form-label">Search</label>
+                    <input type="text" class="form-control" placeholder="Search services..." @bind="searchTerm" @oninput="@((e) => SearchServices(e.Value?.ToString()))" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-control form-select" @bind="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="maintenance">Maintenance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="form-control form-select" @bind="typeFilter">
+                        <option value="">All Types</option>
+                        <option value="vehicle">Vehicle Access</option>
+                        <option value="gate">Gate Control</option>
+                        <option value="monitoring">Monitoring</option>
+                        <option value="reporting">Reporting</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date Range</label>
+                    <input type="date" class="form-control" @bind="dateFilter" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Table -->
+    <div class="card">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h4 class="card-title">Services List</h4>
+                <span class="badge badge-info">@services.Count services</span>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" class="form-checkbox" @onclick="SelectAllServices" />
+                            </th>
+                            <th @onclick="@(() => SortBy("id"))" class="sortable">
+                                ID
+                                @if (sortColumn == "id")
+                                {
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" class="sort-icon">
+                                        <path d="M6 1L2 5h8L6 1zm0 10l4-4H2l4 4z"/>
+                                    </svg>
+                                }
+                            </th>
+                            <th @onclick="@(() => SortBy("name"))" class="sortable">
+                                Service Name
+                                @if (sortColumn == "name")
+                                {
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" class="sort-icon">
+                                        <path d="M6 1L2 5h8L6 1zm0 10l4-4H2l4 4z"/>
+                                    </svg>
+                                }
+                            </th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                            <th>Requests</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var service in services)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-checkbox" checked="@service.Selected" @onclick="@(() => ToggleServiceSelection(service))" />
+                                </td>
+                                <td class="font-mono text-sm">@service.Id</td>
+                                <td>
+                                    <div class="service-name">
+                                        <strong>@service.Name</strong>
+                                        <span class="text-secondary text-sm">@service.Description</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge badge-primary">@service.Type</span>
+                                </td>
+                                <td>
+                                    @switch(service.Status.ToLower())
+                                    {
+                                        case "active":
+                                            <span class="badge badge-success">Active</span>
+                                            break;
+                                        case "inactive":
+                                            <span class="badge badge-danger">Inactive</span>
+                                            break;
+                                        case "maintenance":
+                                            <span class="badge badge-warning">Maintenance</span>
+                                            break;
+                                        default:
+                                            <span class="badge badge-info">@service.Status</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>@service.LastUpdated.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <div class="flex items-center gap-sm">
+                                        <span class="text-lg font-bold">@service.RequestCount</span>
+                                        @if (service.RequestChange > 0)
+                                        {
+                                            <span class="text-success text-sm">+@service.RequestChange%</span>
+                                        }
+                                        else if (service.RequestChange < 0)
+                                        {
+                                            <span class="text-danger text-sm">@service.RequestChange%</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex gap-xs">
+                                        <button class="btn btn-sm btn-ghost btn-icon" title="View Details" @onclick="@(() => ViewService(service))">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                            </svg>
+                                        </button>
+                                        <button class="btn btn-sm btn-ghost btn-icon" title="Edit" @onclick="@(() => EditService(service))">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-10.5 10.5a.5.5 0 0 1-.154.11l-3.5 1a.5.5 0 0 1-.61-.61l1-3.5a.5.5 0 0 1 .11-.154l10.5-10.5 2.147 2.146z"/>
+                                            </svg>
+                                        </button>
+                                        <button class="btn btn-sm btn-ghost btn-icon text-danger" title="Delete" @onclick="@(() => DeleteService(service))">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            @if (services.Count == 0)
+            {
+                <div class="empty-state">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="var(--text-tertiary)" opacity="0.5">
+                        <path d="M32 8C18.745 8 8 18.745 8 32s10.745 24 24 24 24-10.745 24-24S45.255 8 32 8zm0 4c11.046 0 20 8.954 20 20s-8.954 20-20 20-20-8.954-20-20 8.954-20 20-20zm-8 18v4h16v-4H24z"/>
+                    </svg>
+                    <p class="text-secondary mt-md">No services found</p>
+                    <button class="btn btn-primary mt-sm" @onclick="AddNewService">Add Your First Service</button>
+                </div>
+            }
+        </div>
+        
+        @if (services.Count > 0)
+        {
+            <div class="card-footer">
+                <div class="flex justify-between items-center">
+                    <div class="text-secondary">
+                        Showing @((currentPage - 1) * pageSize + 1) to @Math.Min(currentPage * pageSize, totalServices) of @totalServices services
+                    </div>
+                    <div class="pagination">
+                        <button class="btn btn-sm btn-ghost" disabled="@(currentPage == 1)" @onclick="PreviousPage">
+                            Previous
+                        </button>
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            var pageNum = i;
+                            <button class="btn btn-sm @(pageNum == currentPage ? "btn-primary" : "btn-ghost")" @onclick="@(() => GoToPage(pageNum))">
+                                @pageNum
+                            </button>
+                        }
+                        <button class="btn btn-sm btn-ghost" disabled="@(currentPage == totalPages)" @onclick="NextPage">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .services-content {
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: var(--surface-hover);
+        cursor: pointer;
+    }
+    
+    .sortable {
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+    }
+    
+    .sortable:hover {
+        color: var(--primary-color);
+    }
+    
+    .sort-icon {
+        display: inline-block;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
+    
+    .service-name {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .font-mono {
+        font-family: 'Courier New', Courier, monospace;
+    }
+    
+    .text-sm {
+        font-size: 0.875rem;
+    }
+    
+    .text-lg {
+        font-size: 1.125rem;
+    }
+    
+    .text-success {
+        color: var(--success-color);
+    }
+    
+    .text-danger {
+        color: var(--danger-color);
+    }
+    
+    .empty-state {
+        padding: var(--spacing-2xl);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .pagination {
+        display: flex;
+        gap: var(--spacing-xs);
+        align-items: center;
+    }
+</style>
+
+@code {
+    private List<ServiceItem> services = new List<ServiceItem>();
+    private string searchTerm = "";
+    private string statusFilter = "";
+    private string typeFilter = "";
+    private DateTime? dateFilter;
+    private string sortColumn = "id";
+    private bool sortAscending = true;
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalServices = 0;
+    private int totalPages => (int)Math.Ceiling((double)totalServices / pageSize);
+
+    protected override void OnInitialized()
+    {
+        LoadServices();
+    }
+
+    private void LoadServices()
+    {
+        // Sample data - in real app, this would come from API
+        services = new List<ServiceItem>
+        {
+            new ServiceItem 
+            { 
+                Id = "SVC-001", 
+                Name = "Vehicle Access Control", 
+                Description = "Main vehicle entry management",
+                Type = "Vehicle Access", 
+                Status = "Active", 
+                LastUpdated = DateTime.Now.AddDays(-2),
+                RequestCount = 1234,
+                RequestChange = 12
+            },
+            new ServiceItem 
+            { 
+                Id = "SVC-002", 
+                Name = "Gate Monitor Service", 
+                Description = "Real-time gate status monitoring",
+                Type = "Gate Control", 
+                Status = "Active", 
+                LastUpdated = DateTime.Now.AddDays(-5),
+                RequestCount = 892,
+                RequestChange = -3
+            },
+            new ServiceItem 
+            { 
+                Id = "SVC-003", 
+                Name = "Reporting Engine", 
+                Description = "Generate access reports",
+                Type = "Reporting", 
+                Status = "Maintenance", 
+                LastUpdated = DateTime.Now.AddDays(-1),
+                RequestCount = 456,
+                RequestChange = 0
+            },
+            new ServiceItem 
+            { 
+                Id = "SVC-004", 
+                Name = "Security Monitor", 
+                Description = "24/7 security monitoring",
+                Type = "Monitoring", 
+                Status = "Active", 
+                LastUpdated = DateTime.Now.AddDays(-7),
+                RequestCount = 2341,
+                RequestChange = 25
+            },
+            new ServiceItem 
+            { 
+                Id = "SVC-005", 
+                Name = "Backup Service", 
+                Description = "Automated data backup",
+                Type = "Vehicle Access", 
+                Status = "Inactive", 
+                LastUpdated = DateTime.Now.AddDays(-14),
+                RequestCount = 0,
+                RequestChange = 0
+            }
+        };
+        
+        totalServices = services.Count;
+    }
+
+    private void SearchServices(string value)
+    {
+        searchTerm = value;
+        // Implement search logic
+    }
+
+    private void SortBy(string column)
+    {
+        if (sortColumn == column)
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortColumn = column;
+            sortAscending = true;
+        }
+        
+        // Implement sorting logic
+    }
+
+    private void SelectAllServices()
+    {
+        bool allSelected = services.All(s => s.Selected);
+        foreach (var service in services)
+        {
+            service.Selected = !allSelected;
+        }
+    }
+
+    private void ToggleServiceSelection(ServiceItem service)
+    {
+        service.Selected = !service.Selected;
+    }
+
+    private void AddNewService()
+    {
+        // Implement add new service logic
+        Logger.LogInformation("Adding new service");
+    }
+
+    private void ViewService(ServiceItem service)
+    {
+        // Implement view service logic
+        Logger.LogInformation($"Viewing service: {service.Name}");
+    }
+
+    private void EditService(ServiceItem service)
+    {
+        // Implement edit service logic
+        Logger.LogInformation($"Editing service: {service.Name}");
+    }
+
+    private void DeleteService(ServiceItem service)
+    {
+        // Implement delete service logic
+        Logger.LogInformation($"Deleting service: {service.Name}");
+    }
+
+    private void ExportServices()
+    {
+        // Implement export logic
+        Logger.LogInformation("Exporting services");
+    }
+
+    private void PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+        }
+    }
+
+    private void NextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+        }
+    }
+
+    private void GoToPage(int page)
+    {
+        currentPage = page;
+    }
+
+    public class ServiceItem
+    {
+        public string Id { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Type { get; set; } = "";
+        public string Status { get; set; } = "";
+        public DateTime LastUpdated { get; set; }
+        public int RequestCount { get; set; }
+        public int RequestChange { get; set; }
+        public bool Selected { get; set; }
+    }
+}
