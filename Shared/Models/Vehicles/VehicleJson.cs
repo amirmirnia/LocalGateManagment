@@ -10,7 +10,7 @@ using ServicesGateManagment.Shared.Propertys;
 
 namespace ServicesGateManagment.Shared.Vehicles
 {
-    public class Vehicle 
+    public class VehicleJson 
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }

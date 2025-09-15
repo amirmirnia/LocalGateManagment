@@ -13,6 +13,7 @@ namespace ServicesGateManagment.Server.Core.BackGround
     public class IpMonitoringService : BackgroundService
     {
         private readonly ILogger<IpMonitoringService> _logger;
+        private readonly IApiDataService _IApiDataService;
         private readonly IConfiguration _configuration;
         private readonly Dictionary<string, IpStatus> _ipStatuses;
         private int _checkIntervalSeconds;
@@ -20,12 +21,14 @@ namespace ServicesGateManagment.Server.Core.BackGround
 
         public IpMonitoringService(
             ILogger<IpMonitoringService> logger,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IApiDataService iApiDataService)
         {
             _logger = logger;
             _configuration = configuration;
             _ipStatuses = new Dictionary<string, IpStatus>();
             _monitoredIps = new List<MonitoredIp>();
+            _IApiDataService = iApiDataService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -57,8 +60,7 @@ namespace ServicesGateManagment.Server.Core.BackGround
             {
                 _monitoredIps = new List<MonitoredIp>
                 {
-                    new MonitoredIp { Name = "Google DNS", IpAddress = "8.8.8.8", TimeoutMs = 3000 },
-                    new MonitoredIp { Name = "Localhost", IpAddress = "127.0.0.1", TimeoutMs = 1000 }
+                    new MonitoredIp { Name = "GateAccessManagment", IpAddress = "https://localhost:7124", TimeoutMs = 3000 },
                 };
             }
 
@@ -163,6 +165,8 @@ namespace ServicesGateManagment.Server.Core.BackGround
 
                 // Example function: You can replace this with your custom logic
                 // For example: Send notification, update database, trigger other services, etc.
+
+               await _IApiDataService.PostDataInDBLocalToExternal();
 
                 // Example 1: Log the connection event
                 await LogConnectionEvent(monitoredIp, true);

@@ -31,6 +31,7 @@ public class VehicleInquireController : ControllerBase
     {
         try
         {
+            
             _logger.LogInformation($"Received vehicle inquire request for gate: {request.Gate}");
 
             var result = await _vehicleInquireService.ProcessInquireAsync(request);
@@ -59,6 +60,7 @@ public class VehicleInquireController : ControllerBase
     {
         try
         {
+            
             // ارسال درخواست POST
             var response = await _httpClient.PostAsJsonAsync("https://localhost:7124/Api/Access/inquire/vehicle", request);
 

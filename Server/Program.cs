@@ -2,7 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Services.BackGround;
 using ServicesGateManagment.Server;
+using ServicesGateManagment.Server.Core.BackGround;
 using ServicesGateManagment.Shared.DBContext;
+using YourProject.Services;
+using IApiDataService = ServicesGateManagment.Server.IApiDataService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +35,7 @@ builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
 
 // Register the background service
 builder.Services.AddHostedService<DataFetcherBackgroundService>();
+builder.Services.AddHostedService<NetworkCheckBackgroundService>();
 
 
 var app = builder.Build();

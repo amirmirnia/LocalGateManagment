@@ -11,6 +11,7 @@ using ServicesGateManagment.Shared.Models.Vehicles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using ServicesGateManagment.Shared.DBContext;
+using System.Text.Json;
 
 namespace ServicesGateManagment.Server;
 
@@ -34,11 +35,11 @@ public class VehicleInquireService : IVehicleInquireService
         }
     }
 
-    public Vehicle GetVehicleFromPlaque(string plaque)
+    public VehicleJson GetVehicleFromPlaque(string plaque)
     {
         try
         {
-            return new Vehicle()
+            return new VehicleJson()
             {
                 PlatePart1 = int.Parse(plaque.Substring(0, 2)),
                 Letter = GetPlateLetter(plaque.Substring(2, 1)),
@@ -98,7 +99,7 @@ public class VehicleInquireService : IVehicleInquireService
             // خواندن Vehicles از فایل JSON
             string vehicleFilePath = Path.Combine(_env.ContentRootPath, "FetchedData", "data.json");
             var jsonVehicle = await File.ReadAllTextAsync(vehicleFilePath, cancellationToken);
-            List<Vehicle> vehicles = System.Text.Json.JsonSerializer.Deserialize<List<Vehicle>>(jsonVehicle) ?? new List<Vehicle>();
+            List<VehicleJson> vehicles = System.Text.Json.JsonSerializer.Deserialize<List<VehicleJson>>(jsonVehicle) ?? new List<VehicleJson>();
 
             // خواندن Gates از فایل JSON
             string gateFilePath = Path.Combine(_env.ContentRootPath, "FetchedData", "Gate.json");
@@ -171,13 +172,13 @@ public class VehicleInquireService : IVehicleInquireService
             }
             else
             {
-                vehicle = vehicleWithPlate;
-                vehicle.Color = car.CarColor;
-                vehicle.Type = VehicleType.Sedan;
-                vehicle.CreatedUtc = now;
-                vehicle.LastModifiedUtc = now;
-                vehicle.Id = vehicles.Any() ? vehicles.Max(x => x.Id) + 1 : 1;
-                vehicles.Add(vehicle);
+                //vehicle = vehicleWithPlate;
+                //vehicle.Color = car.CarColor;
+                //vehicle.Type = VehicleType.Sedan;
+                //vehicle.CreatedUtc = now;
+                //vehicle.LastModifiedUtc = now;
+                //vehicle.Id = vehicles.Any() ? vehicles.Max(x => x.Id) + 1 : 1;
+                //vehicles.Add(vehicle);
             }
 
             // بررسی سیاست Gate
@@ -191,7 +192,7 @@ public class VehicleInquireService : IVehicleInquireService
                 Color = car.CarColor,
                 Class = car.CarClass,
                 GateId = gate.Id,
-                VehicleId = vehicle.Id,
+                VehicleId = 0,
                 Type = gate.InquireType,
                 GateValidation = gateValidation,
                 ReferenceId = request.ReferenceId, // اصلاح: استفاده از request.ReferenceId
@@ -308,9 +309,19 @@ public class VehicleInquireService : IVehicleInquireService
             //}
 
             // افزودن VehicleInquire به لیست
-            _db.Add(entity);
-            await _db.SaveChangesAsync(cancellationToken);
+            //_db.Add(entity);
+            //await _db.SaveChangesAsync(cancellationToken);
 
+            //save requestJson in DB
+            var requestEntity = new VehicleInquireRequestJson
+            {
+                RequestData = JsonSerializer.Serialize(request),
+                CreatedAt = DateTime.UtcNow,
+                IsSent = false
+            };
+
+            _db.Add(requestEntity);
+            await _db.SaveChangesAsync();
 
             return new VehicleInquireResultVm()
             {
