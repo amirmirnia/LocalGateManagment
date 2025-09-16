@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ServicesGateManagment.Client;
+namespace ServicesGateManagment.Client.Services;
 using Microsoft.Extensions.Logging;
 
 public class ApiDataService : IApiDataService

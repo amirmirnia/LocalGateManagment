@@ -20,6 +20,6 @@ namespace ServicesGateManagment.Shared.Models.Vehicles
 
 
         public int InquireId { get; set; }
-        //public VehicleInquire Inquire { get; set; } = null!;
+        public VehicleInquire Inquire { get; set; } = null!;
     }
 }

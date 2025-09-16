@@ -35,23 +35,7 @@ public class VehicleInquireService : IVehicleInquireService
         }
     }
 
-    public VehicleJson GetVehicleFromPlaque(string plaque)
-    {
-        try
-        {
-            return new VehicleJson()
-            {
-                PlatePart1 = int.Parse(plaque.Substring(0, 2)),
-                Letter = GetPlateLetter(plaque.Substring(2, 1)),
-                PlatePart2 = int.Parse(plaque.Substring(3, 3)),
-                PlatePart3 = int.Parse(plaque.Substring(6, 2)),
-            };
-        }
-        catch (Exception e)
-        {
-            throw new ValidationException("Plaque");
-        }
-    }
+
     private readonly Dictionary<string, VehiclePlateLetter> _plaqueLetterMapping
            = new()
            {
@@ -81,20 +65,13 @@ public class VehicleInquireService : IVehicleInquireService
                 { "z", VehiclePlateLetter.Ze }
            };
 
-    public VehiclePlateLetter GetPlateLetter(string plaqueLetter)
-    {
-        //check safety
-        return _plaqueLetterMapping[plaqueLetter];
-    }
-
+   
     public async Task<VehicleInquireResultVm> ProcessInquireAsync(CreateVehicleInquireRequest request, CancellationToken cancellationToken = default)
     {
         //throw new NotImplementedException();
         try
         {
             _logger.LogInformation($"Processing vehicle inquire for gate: {request.Gate}, Reference: {request.ReferenceId}");
-
-            
 
             // خواندن Vehicles از فایل JSON
             string vehicleFilePath = Path.Combine(_env.ContentRootPath, "FetchedData", "data.json");
@@ -115,7 +92,7 @@ public class VehicleInquireService : IVehicleInquireService
             var car = request.Cars.FirstOrDefault() ?? throw new ValidationException("Cars Car not found!");
             var plaque = car.DetectedPlaques.FirstOrDefault() ?? throw new ValidationException("Plaque Plaque not found!");
 
-            var vehicleWithPlate = GetVehicleFromPlaque(plaque.Plaque);
+            var vehicleWithPlate =await GetVehicleFromPlaque(plaque.Plaque);
 
             // جستجوی وسیله نقلیه با پلاک
             var vehicle = vehicleWithPlate.Letter == VehiclePlateLetter.Gaf
@@ -339,5 +316,26 @@ public class VehicleInquireService : IVehicleInquireService
         }
     }
 
- 
+    public async Task<VehicleJson> GetVehicleFromPlaque(string plaque)
+    {
+        try
+        {
+            return new VehicleJson()
+            {
+                PlatePart1 = int.Parse(plaque.Substring(0, 2)),
+                Letter =await GetPlateLetter(plaque.Substring(2, 1)),
+                PlatePart2 = int.Parse(plaque.Substring(3, 3)),
+                PlatePart3 = int.Parse(plaque.Substring(6, 2)),
+            };
+        }
+        catch (Exception e)
+        {
+            throw new ValidationException("Plaque");
+        }
+    }
+
+    public async Task<VehiclePlateLetter> GetPlateLetter(string plaqueLetter)
+    {
+        return _plaqueLetterMapping[plaqueLetter];
+    }
 }

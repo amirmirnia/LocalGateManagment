@@ -17,12 +17,15 @@ public class ApiDataService : IApiDataService
     private readonly HttpClient _httpClient;
     private readonly ILogger<ApiDataService> _logger;
     private ApplicationDbContext _db;
+    private readonly string _TargetUrl;
 
-    public ApiDataService(HttpClient httpClient, ILogger<ApiDataService> logger, ApplicationDbContext db)
+    public ApiDataService(HttpClient httpClient, IConfiguration configuration, ILogger<ApiDataService> logger, ApplicationDbContext db)
     {
         _httpClient = httpClient;
         _logger = logger;
         _db = db;
+        _TargetUrl = configuration.GetSection("ApiSettings:TargetUrl").Value;
+
     }
 
     public async Task<string> FetchDataAsync(string endpoint)
@@ -127,7 +130,7 @@ public class ApiDataService : IApiDataService
                         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                     });
 
-                    var response=await _httpClient.PostAsJsonAsync("https://localhost:7124/Api/Access/inquire/vehicle", jsonObject);
+                    var response=await _httpClient.PostAsJsonAsync($"{_TargetUrl}/Api/Access/inquire/vehicle", jsonObject);
                     if (response.IsSuccessStatusCode)
                     {
                         entity.IsSent = true;

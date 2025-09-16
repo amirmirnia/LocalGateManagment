@@ -19,9 +19,6 @@ namespace ServicesGateManagment.Shared.DBContext
         // DbSet برای مدل‌های شما
         public DbSet<VehicleInquireRequestJson> VehicleInquireRequestJson { get; set; }
 
-        //public DbSet<VehicleInquire> VehicleInquire { get; set; }
-        //public DbSet<VehicleInquireResult> VehicleInquireResult { get; set; }
-
         public override int SaveChanges()
         {
             UpdateAuditFields();

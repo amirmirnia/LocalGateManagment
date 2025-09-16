@@ -1,7 +1,7 @@
 @page "/"
 @using ServicesGateManagment.Client.Services
 @using ServicesGateManagment.Shared.Models.Common
-@inject ConfigService ConfigService
+@inject IConfigService ConfigService
 @inject IJSRuntime JSRuntime
 @inject ILogger<Index> Logger
 
@@ -308,101 +308,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    .dashboard-content {
-    animation: fadeIn 0.3s ease;
-    }
-
-    .activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-    }
-
-    .activity-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-sm) 0;
-    }
-
-    .activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    }
-
-    .activity-icon.bg-primary { background-color: var(--primary-color); }
-    .activity-icon.bg-success { background-color: var(--success-color); }
-    .activity-icon.bg-warning { background-color: var(--warning-color); }
-    .activity-icon.bg-danger { background-color: var(--danger-color); }
-    .activity-icon.bg-info { background-color: var(--info-color); }
-
-    .activity-content {
-    flex: 1;
-    }
-
-    .activity-text {
-    margin: 0;
-    font-size: 0.875rem;
-    color: var(--text-primary);
-    font-weight: 500;
-    }
-
-    .activity-time {
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    }
-
-    .data-preview {
-    background-color: var(--bg-tertiary);
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius);
-    max-height: 400px;
-    overflow-y: auto;
-    font-size: 0.875rem;
-    line-height: 1.4;
-    color: var(--text-secondary);
-    }
-
-    .chart-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-md);
-    }
-
-    .status-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-    }
-
-    .status-item {
-    display: grid;
-    grid-template-columns: 100px 1fr 50px;
-    align-items: center;
-    gap: var(--spacing-md);
-    }
-
-    .status-label {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-    }
-
-    .status-value {
-    font-size: 0.875rem;
-    color: var(--text-primary);
-    font-weight: 600;
-    text-align: right;
-    }
-</style>
 
 @code {
     private string apiEndpoint = "/api/access/vehicles/access-info";

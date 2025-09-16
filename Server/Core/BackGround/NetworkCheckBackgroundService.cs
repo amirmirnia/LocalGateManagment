@@ -10,12 +10,12 @@ namespace YourProject.Services
         private readonly ILogger<NetworkCheckBackgroundService> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly HttpClient _httpClient;
-        private readonly string _targetUrl = "https://localhost:7124/"; // URL مورد نظر
+        private readonly string _targetUrl; // URL مورد نظر
         private readonly int _timeoutSeconds = 5; // تایم اوت درخواست (5 ثانیه)
 
         public NetworkCheckBackgroundService(
             ILogger<NetworkCheckBackgroundService> logger,
-            IServiceScopeFactory serviceScopeFactory)
+            IServiceScopeFactory serviceScopeFactory, IConfiguration configuration)
         {
             _logger = logger;
             _serviceScopeFactory = serviceScopeFactory;
@@ -23,6 +23,8 @@ namespace YourProject.Services
             // HttpClient با تنظیمات مناسب برای localhost
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(_timeoutSeconds);
+
+            _targetUrl = configuration.GetSection("ApiSettings:TargetUrl").Value;
 
             // برای HTTPS localhost با گواهی خودامضا
             var handler = new HttpClientHandler();

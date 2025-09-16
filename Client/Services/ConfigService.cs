@@ -4,7 +4,7 @@ using ServicesGateManagment.Shared.Models.Common;
 
 namespace ServicesGateManagment.Client.Services;
 
-public class ConfigService
+public class ConfigService: IConfigService
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<ConfigService> _logger;
@@ -119,9 +119,3 @@ public class ConfigService
     }
 }
 
-public class FetchDataResponse
-{
-    public string Data { get; set; } = string.Empty;
-    public bool Success { get; set; }
-    public string Error { get; set; } = string.Empty;
-}

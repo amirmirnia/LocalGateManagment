@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Services.BackGround;
 using ServicesGateManagment.Server;
-using ServicesGateManagment.Server.Core.BackGround;
 using ServicesGateManagment.Shared.DBContext;
 using YourProject.Services;
 using IApiDataService = ServicesGateManagment.Server.IApiDataService;

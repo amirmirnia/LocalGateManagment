@@ -1,4 +1,4 @@
-namespace ServicesGateManagment.Client;
+namespace ServicesGateManagment.Client.Services;
 
 public interface IApiDataService
 {

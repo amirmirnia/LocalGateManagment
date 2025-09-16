@@ -55,6 +55,8 @@ public class VehicleInquireController : ControllerBase
         }
     }
 
+    //send to DB Server GateManagment
+    /// https://localhost:7012/api/VehicleInquire/inquireApi
     [HttpPost("inquireApi")]
     public async Task<ActionResult<VehicleInquireResultVm>> InquireVehicleAccessApi(CreateVehicleInquireRequest request)
     {
@@ -94,40 +96,40 @@ public class VehicleInquireController : ControllerBase
         }
     }
 
-    [HttpGet("summary")]
-    public async Task<ActionResult<object>> GetInquirySummary()
-    {
-        try
-        {
-            var summaryFile = Path.Combine(Directory.GetCurrentDirectory(), "InquireData", "inquire_summary.json");
+    //[HttpGet("summary")]
+    //public async Task<ActionResult<object>> GetInquirySummary()
+    //{
+    //    try
+    //    {
+    //        var summaryFile = Path.Combine(Directory.GetCurrentDirectory(), "InquireData", "inquire_summary.json");
 
-            if (!System.IO.File.Exists(summaryFile))
-            {
-                return Ok(new List<object>());
-            }
+    //        if (!System.IO.File.Exists(summaryFile))
+    //        {
+    //            return Ok(new List<object>());
+    //        }
 
-            var json = await System.IO.File.ReadAllTextAsync(summaryFile);
-            return Ok(json);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving inquiry summary");
-            return StatusCode(500, new { Error = "Unable to retrieve summary" });
-        }
-    }
+    //        var json = await System.IO.File.ReadAllTextAsync(summaryFile);
+    //        return Ok(json);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "Error retrieving inquiry summary");
+    //        return StatusCode(500, new { Error = "Unable to retrieve summary" });
+    //    }
+    //}
 
     /// <summary>
     /// Health check endpoint
     /// </summary>
     /// <returns>Service status</returns>
-    [HttpGet("health")]
-    public ActionResult<object> GetHealth()
-    {
-        return Ok(new
-        {
-            Status = "Healthy",
-            Timestamp = DateTime.Now,
-            Service = "VehicleDataFetcher API"
-        });
-    }
+    //[HttpGet("health")]
+    //public ActionResult<object> GetHealth()
+    //{
+    //    return Ok(new
+    //    {
+    //        Status = "Healthy",
+    //        Timestamp = DateTime.Now,
+    //        Service = "VehicleDataFetcher API"
+    //    });
+    //}
 }
