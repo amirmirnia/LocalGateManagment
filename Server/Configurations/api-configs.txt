@@ -1,4 +1,5 @@
 # API Configuration File
 # Format: FileName|ApiEndpoint|IntervalMinutes|IsEnabled|LastFetchTime|CreatedAt
 #
-data.json|https://localhost:7124/api/ServicesGateManagement/access-Vehicles|1|True|2025-09-16 23:55:16|2025-09-16 00:29:18
+Gate.json|https://localhost:7124/api/ServicesGateManagement/access-gates|1|True|2025-09-21 00:05:54|2025-09-20 01:36:53
+data.json|https://localhost:7124/api/ServicesGateManagement/access-Vehicles|1|True|2025-09-21 00:06:04|2025-09-20 00:12:50

@@ -17,5 +17,4 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 
 // Add a general HttpClient for external API calls
 builder.Services.AddHttpClient();
-
 await builder.Build().RunAsync();

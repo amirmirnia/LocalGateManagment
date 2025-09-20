@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Services.BackGround;
 using ServicesGateManagment.Server;
+using ServicesGateManagment.Server.Handlers;
 using ServicesGateManagment.Shared.DBContext;
 using YourProject.Services;
 using IApiDataService = ServicesGateManagment.Server.IApiDataService;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var apiKey = builder.Configuration.GetValue<string>("ApiSquretySettings:ApiKey");
+var TargetUrl = builder.Configuration.GetValue<string>("ApiSettings:TargetUrl");
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -26,7 +29,13 @@ builder.Services.AddCors(options =>
 });
 
 // Add HttpClient service
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("ApiClient", client =>
+{
+    client.BaseAddress = new Uri($"{TargetUrl}/"); // آدرس پایه API
+    client.DefaultRequestHeaders.Add("X-API-Key", apiKey); // کلید API
+});
+
+builder.Services.AddSingleton<ApiService>();
 
 builder.Services.AddScoped<IVehicleInquireService, VehicleInquireService>();
 builder.Services.AddScoped<IApiDataService, ApiDataService>();

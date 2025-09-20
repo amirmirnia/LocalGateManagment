@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -18,8 +19,14 @@ namespace ServicesGateManagment.Shared.Vehicles
         [JsonPropertyName("platePart1")]
         public int PlatePart1 { get; set; }
 
+        [JsonPropertyName("letterId")]
+        public string LetterId { get; set; } = string.Empty;
+
         [JsonPropertyName("letter")]
-        public VehiclePlateLetter Letter { get; set; }
+        public VehiclePlateLetter Letter { get; set; } = VehiclePlateLetter.Alef;
+
+        [JsonPropertyName("letterTitle")]
+        public string LetterTitle => VehiclePlateLetterDescription(Letter);
 
         [JsonPropertyName("platePart2")]
         public int PlatePart2 { get; set; }
@@ -27,31 +34,27 @@ namespace ServicesGateManagment.Shared.Vehicles
         [JsonPropertyName("platePart3")]
         public int PlatePart3 { get; set; }
 
+        [JsonPropertyName("displayPlate")]
+        public string DisplayPlate =>
+            $"{PlatePart3} | {PlatePart2} {VehiclePlateLetterDescription(Letter)} {PlatePart1}";
+
+        [JsonPropertyName("typeId")]
+        public int TypeId { get; set; }
+
+
         [JsonPropertyName("type")]
-        public VehicleType Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         [JsonPropertyName("color")]
         public string Color { get; set; } = string.Empty;
 
-        [JsonPropertyName("createdBy")]
-        public string? CreatedBy { get; set; }
 
-        [JsonPropertyName("createdUtc")]
-        public DateTime CreatedUtc { get; set; }
-
-        [JsonPropertyName("lastModifiedBy")]
-        public string? LastModifiedBy { get; set; }
-
-        [JsonPropertyName("lastModifiedUtc")]
-        public DateTime LastModifiedUtc { get; set; }
-
-        [JsonPropertyName("properties")]
-        public ICollection<PropertyVehicle> Properties { get; set; } = new List<PropertyVehicle>();
-
-        [JsonPropertyName("isEntranceBlacklisted")]
-        public bool IsEntranceBlacklisted { get; set; } = false;
-
-        [JsonPropertyName("isExitBlacklisted")]
-        public bool IsExitBlacklisted { get; set; } = false;
+        private string VehiclePlateLetterDescription(VehiclePlateLetter e)
+        {
+            var type = typeof(VehiclePlateLetter);
+            var member = type.GetMember(e.ToString());
+            var attributes = member[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+            return ((DescriptionAttribute)attributes[0]).Description;
+        }
     }
 }

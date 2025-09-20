@@ -3,6 +3,7 @@ using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ServicesGateManagment.Server.Handlers;
 using ServicesGateManagment.Shared;
 using ServicesGateManagment.Shared.DBContext;
 using ServicesGateManagment.Shared.Models.Common;
@@ -14,12 +15,12 @@ namespace ServicesGateManagment.Server;
 
 public class ApiDataService : IApiDataService
 {
-    private readonly HttpClient _httpClient;
+    private readonly ApiService _httpClient;
     private readonly ILogger<ApiDataService> _logger;
     private ApplicationDbContext _db;
     private readonly string _TargetUrl;
 
-    public ApiDataService(HttpClient httpClient, IConfiguration configuration, ILogger<ApiDataService> logger, ApplicationDbContext db)
+    public ApiDataService(ApiService httpClient, IConfiguration configuration, ILogger<ApiDataService> logger, ApplicationDbContext db)
     {
         _httpClient = httpClient;
         _logger = logger;
@@ -34,7 +35,7 @@ public class ApiDataService : IApiDataService
         {
             _logger.LogInformation($"Fetching data from endpoint: {endpoint}");
 
-            var response = await _httpClient.GetAsync(endpoint);
+            var response = await _httpClient.GetRawResponseAsync(endpoint);
             response.EnsureSuccessStatusCode();
 
             var jsonContent = await response.Content.ReadAsStringAsync();

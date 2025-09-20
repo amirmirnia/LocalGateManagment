@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Reflection;
 using ServicesGateManagment.Client.Pages;
 using System.Text.Json;
+using ServicesGateManagment.Server.Handlers;
 
 namespace VehicleDataFetcherBlazor.Controllers;
 
@@ -14,11 +15,11 @@ public class VehicleInquireController : ControllerBase
 {
     private readonly IVehicleInquireService _vehicleInquireService;
     private readonly ILogger<VehicleInquireController> _logger;
-    private readonly HttpClient _httpClient;
+    private readonly ApiService _httpClient;
 
     public VehicleInquireController(
         IVehicleInquireService vehicleInquireService,
-        ILogger<VehicleInquireController> logger, HttpClient httpClient)
+        ILogger<VehicleInquireController> logger, ApiService httpClient)
     {
         _vehicleInquireService = vehicleInquireService;
         _logger = logger;
@@ -55,7 +56,7 @@ public class VehicleInquireController : ControllerBase
         }
     }
 
-    //send to DB Server GateManagment
+    //send to DB Server GateManagment Liara
     /// https://localhost:7012/api/VehicleInquire/inquireApi
     [HttpPost("inquireApi")]
     public async Task<ActionResult<VehicleInquireResultVm>> InquireVehicleAccessApi(CreateVehicleInquireRequest request)
@@ -64,7 +65,7 @@ public class VehicleInquireController : ControllerBase
         {
             
             // ارسال درخواست POST
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7124/Api/Access/inquire/vehicle", request);
+            var response = await _httpClient.PostAsJsonAsync("/Api/Access/inquire/vehicle", request);
 
             // بررسی موفقیت‌آمیز بودن درخواست
             response.EnsureSuccessStatusCode();
@@ -96,40 +97,5 @@ public class VehicleInquireController : ControllerBase
         }
     }
 
-    //[HttpGet("summary")]
-    //public async Task<ActionResult<object>> GetInquirySummary()
-    //{
-    //    try
-    //    {
-    //        var summaryFile = Path.Combine(Directory.GetCurrentDirectory(), "InquireData", "inquire_summary.json");
 
-    //        if (!System.IO.File.Exists(summaryFile))
-    //        {
-    //            return Ok(new List<object>());
-    //        }
-
-    //        var json = await System.IO.File.ReadAllTextAsync(summaryFile);
-    //        return Ok(json);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, "Error retrieving inquiry summary");
-    //        return StatusCode(500, new { Error = "Unable to retrieve summary" });
-    //    }
-    //}
-
-    /// <summary>
-    /// Health check endpoint
-    /// </summary>
-    /// <returns>Service status</returns>
-    //[HttpGet("health")]
-    //public ActionResult<object> GetHealth()
-    //{
-    //    return Ok(new
-    //    {
-    //        Status = "Healthy",
-    //        Timestamp = DateTime.Now,
-    //        Service = "VehicleDataFetcher API"
-    //    });
-    //}
 }
