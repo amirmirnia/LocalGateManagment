@@ -292,16 +292,7 @@ public class VehicleInquireService : IVehicleInquireService
                 //_db.Add(entity);
                 //await _db.SaveChangesAsync(cancellationToken);
 
-                ////save requestJson in DB
-                //var requestEntity = new VehicleInquireRequestJson
-                //{
-                //    RequestData = JsonSerializer.Serialize(request),
-                //    CreatedAt = DateTime.UtcNow,
-                //    IsSent = false
-                //};
-
-                //_db.Add(requestEntity);
-                //await _db.SaveChangesAsync();
+               
 
                 return new VehicleInquireResultVm()
                 {
@@ -312,6 +303,16 @@ public class VehicleInquireService : IVehicleInquireService
                 };
                 //return _mapper.Map<VehicleInquireResultVm>(entity.Result);
             }
+            ////save requestJson in DB
+            var requestEntity = new VehicleInquireRequestJson
+            {
+                RequestData = JsonSerializer.Serialize(request),
+                CreatedAt = DateTime.UtcNow,
+                IsSent = false
+            };
+
+            _db.Add(requestEntity);
+            await _db.SaveChangesAsync();
             return new VehicleInquireResultVm(){};
         }
         catch (Exception ex)

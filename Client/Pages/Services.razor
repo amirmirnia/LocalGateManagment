@@ -184,7 +184,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             @if (services.Count == 0)
             {
                 <div class="empty-state">
@@ -196,7 +196,7 @@
                 </div>
             }
         </div>
-        
+
         @if (services.Count > 0)
         {
             <div class="card-footer">
@@ -227,77 +227,78 @@
 
 <style>
     .services-content {
-        animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.3s ease;
     }
-    
+
     .table-responsive {
-        overflow-x: auto;
+    overflow-x: auto;
     }
-    
+
     .table-hover tbody tr:hover {
-        background-color: var(--surface-hover);
-        cursor: pointer;
+    background-color: var(--surface-hover);
+    cursor: pointer;
     }
-    
+
     .sortable {
-        cursor: pointer;
-        user-select: none;
-        position: relative;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
     }
-    
+
     .sortable:hover {
-        color: var(--primary-color);
+    color: var(--primary-color);
     }
-    
+
     .sort-icon {
-        display: inline-block;
-        margin-left: 4px;
-        vertical-align: middle;
+    display: inline-block;
+    margin-left: 4px;
+    vertical-align: middle;
     }
-    
+
     .service-name {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     }
-    
+
     .font-mono {
-        font-family: 'Courier New', Courier, monospace;
+    font-family: 'Courier New', Courier, monospace;
     }
-    
+
     .text-sm {
-        font-size: 0.875rem;
+    font-size: 0.875rem;
     }
-    
+
     .text-lg {
-        font-size: 1.125rem;
+    font-size: 1.125rem;
     }
-    
+
     .text-success {
-        color: var(--success-color);
+    color: var(--success-color);
     }
-    
+
     .text-danger {
-        color: var(--danger-color);
+    color: var(--danger-color);
     }
-    
+
     .empty-state {
-        padding: var(--spacing-2xl);
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+    padding: var(--spacing-2xl);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     }
-    
+
     .pagination {
-        display: flex;
-        gap: var(--spacing-xs);
-        align-items: center;
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
     }
 </style>
 
 @code {
+
     private List<ServiceItem> services = new List<ServiceItem>();
     private string searchTerm = "";
     private string statusFilter = "";
@@ -312,6 +313,7 @@
 
     protected override void OnInitialized()
     {
+
         LoadServices();
     }
 
