@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServicesGateManagment.Server;
+using ServicesGateManagment.Shared;
 using ServicesGateManagment.Shared.Models.Common;
+using static System.Net.WebRequestMethods;
 
 namespace ServicesGateManagment.Server.Controllers;
 
@@ -10,11 +12,15 @@ public class ApiProxyController : ControllerBase
 {
     private readonly IApiDataService _apiDataService;
     private readonly ILogger<ApiProxyController> _logger;
+    private readonly string _targetUrl; // URL مورد نظر
 
-    public ApiProxyController(IApiDataService apiDataService, ILogger<ApiProxyController> logger)
+
+    public ApiProxyController(IApiDataService apiDataService, ILogger<ApiProxyController> logger,IConfiguration configuration)
     {
         _apiDataService = apiDataService;
         _logger = logger;
+        _targetUrl = configuration.GetSection("ApiSettings:TargetUrl").Value;
+
     }
 
     [HttpPost("fetch")]
@@ -54,6 +60,21 @@ public class ApiProxyController : ControllerBase
                 Success = false,
                 Error = ex.Message
             });
+        }
+
+    }
+
+
+    [HttpGet]
+    public async Task<bool> CheckConnection()
+    {
+        try
+        {
+            return await _apiDataService.CheckConnection(_targetUrl);
+        }
+        catch
+        {
+            return false;
         }
     }
 }

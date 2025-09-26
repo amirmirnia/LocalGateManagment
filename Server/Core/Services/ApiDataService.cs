@@ -151,4 +151,17 @@ public class ApiDataService : IApiDataService
         }
 
     }
+
+    public async Task<bool> CheckConnection(string url)
+    {
+        try
+        {
+            var response = await _httpClient.GetRawAsync(url);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

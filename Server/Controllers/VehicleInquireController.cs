@@ -1,14 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServicesGateManagment.Shared;
 using ServicesGateManagment.Server;
-using System.Net.Http;
-using System.Reflection;
-using ServicesGateManagment.Client.Pages;
 using System.Text.Json;
 using ServicesGateManagment.Server.Handlers;
-using ServicesGateManagment.Shared.Models.Vehicles;
-using AutoMapper;
-using Humanizer;
 using ServicesGateManagment.Shared.Models.ViewModel.Vehicles;
 
 namespace VehicleDataFetcherBlazor.Controllers;

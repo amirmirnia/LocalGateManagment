@@ -9,4 +9,5 @@ public interface IApiDataService
     Task<string> PostDataAsync(string endpoint, FetchDataRequest FetchDataRequest);
 
     Task PostDataInDBLocalToExternal();
+    Task<bool> CheckConnection(string url);
 }

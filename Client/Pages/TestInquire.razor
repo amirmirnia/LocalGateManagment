@@ -1,4 +1,4 @@
-@page "/test-inquire"
+﻿@page "/test-inquire"
 @using ServicesGateManagment.Shared
 @using Newtonsoft.Json
 @inject HttpClient Http
@@ -9,14 +9,14 @@
 @inject IJSRuntime JSRuntime
 @inject ILogger<Index> Logger
 
-<PageTitle>Test Vehicle Inquire API</PageTitle>
+<PageTitle>تست عملکرد</PageTitle>
 
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-info text-white">
-                    <h4>Test Vehicle Inquire API</h4>
+                    <h4>تست عملکرد</h4>
                 </div>
                 <div class="card-body">
                    @*  <div class="mb-3">
@@ -83,30 +83,30 @@
                             @if (isLoading)
                             {
                                 <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                <span>Processing...</span>
+                                <span>در حال پردازش...</span>
                             }
                             else
                             {
-                                <span>Send InquireApi Request</span>
+                                <span>ارسال به سمت لیارا</span>
                             }
                         </button>
                         <button class="btn btn-primary" @onclick="SendInquireRequestLocal" disabled="@isLoading">
                             @if (isLoading)
                             {
                                 <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                <span>Processing...</span>
+                                <span>در حال پردازش...</span>
                             }
                             else
                             {
-                                <span>Send Inquire Request</span>
+                                <span>ارسال به سمت سرویس مدیریت</span>
                             }
                         </button>
                         <button class="btn btn-secondary" @onclick="FillSampleData">
-                            Fill Sample Data
+                           تکمیل اطلاعات(نمونه)
                         </button>
 
                         <button class="btn btn-warning" @onclick="ClearForm">
-                            Clear
+                            شروع مجدد
                         </button>
                     </div>
 
@@ -130,7 +130,7 @@
             {
                 <div class="card mt-3">
                     <div class="card-header bg-success text-white">
-                        <h5>Inquiry Result</h5>
+                        <h5>جواب احراز</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -220,7 +220,7 @@
             {
                 <div class="card mt-3">
                     <div class="card-header">
-                        <h6>Request JSON (for reference)</h6>
+                        <h6>ارسالی JSON (for reference)</h6>
                     </div>
                     <div class="card-body">
                         <pre class="bg-light p-3" style="max-height: 300px; overflow-y: auto; font-size: 0.8rem;">@requestJson</pre>

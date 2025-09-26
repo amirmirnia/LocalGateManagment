@@ -3,15 +3,21 @@ using Newtonsoft.Json.Linq;
 
 namespace ServicesGateManagment.Client.Services;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using System.Net;
+using ServicesGateManagment.Shared;
+using System.Net.Http.Json;
 
 public class ApiDataService : IApiDataService
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly HttpClient _httpClient;
     private readonly ILogger<ApiDataService> _logger;
 
-    public ApiDataService(IHttpClientFactory httpClientFactory, ILogger<ApiDataService> logger)
+    public ApiDataService(IHttpClientFactory httpClientFactory, ILogger<ApiDataService> logger, HttpClient httpClient)
     {
         _httpClientFactory = httpClientFactory;
+        _httpClient = httpClient;
         _logger = logger;
     }
 
@@ -77,4 +83,22 @@ public class ApiDataService : IApiDataService
         var jsonData = await FetchDataAsync(endpoint);
         return System.Text.Encoding.UTF8.GetBytes(jsonData);
     }
+
+    public async Task<bool> CheckConnectionToLiara()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("api/ApiProxy");
+            response.EnsureSuccessStatusCode();
+
+            var configurations = await response.Content.ReadFromJsonAsync<bool>();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading configurations from API");
+            throw;
+        }
+    }
+
 }

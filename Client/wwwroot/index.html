@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fa-IR" dir="rtl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,9 +16,9 @@
     <div id="app">
         <div class="loading-container">
             <div class="loading-content">
-                <div class="spinner spinner-lg"></div>
-                <h2 class="loading-title">Services Gate Management</h2>
-                <p class="loading-text">Loading application...</p>
+                <!--<div class="spinner spinner-lg"></div>-->
+                <img src="Img/hospad1.png" title="" />
+                <p class="loading-text"> سامانه سرویس مدیریت آفلاین شهرک مسکونی</p>
             </div>
         </div>
     </div>
@@ -27,7 +26,7 @@
     <div id="blazor-error-ui">
         <div class="error-content">
             <svg width="48" height="48" viewBox="0 0 48 48" fill="currentColor">
-                <path d="M24 4C12.96 4 4 12.96 4 24s8.96 20 20 20 20-8.96 20-20S35.04 4 24 4zm2 30h-4v-4h4v4zm0-8h-4V14h4v12z"/>
+                <path d="M24 4C12.96 4 4 12.96 4 24s8.96 20 20 20 20-8.96 20-20S35.04 4 24 4zm2 30h-4v-4h4v4zm0-8h-4V14h4v12z" />
             </svg>
             <h3>An unexpected error has occurred</h3>
             <p>We apologize for the inconvenience. Please try reloading the page.</p>
@@ -35,33 +34,34 @@
             <button class="dismiss-error" aria-label="Dismiss">✕</button>
         </div>
     </div>
-    
+
     <style>
         .loading-container {
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #d57924;
         }
-        
+
         .loading-content {
             text-align: center;
             color: white;
         }
-        
+
         .loading-title {
             margin-top: 1.5rem;
             font-size: 1.875rem;
             font-weight: 700;
         }
-        
+
         .loading-text {
             margin-top: 0.5rem;
             font-size: 1rem;
             opacity: 0.9;
+            color:white;
         }
-        
+
         #blazor-error-ui {
             background: rgba(0, 0, 0, 0.8);
             bottom: 0;
@@ -73,39 +73,39 @@
             right: 0;
             z-index: 10000;
         }
-        
-        #blazor-error-ui .error-content {
-            max-width: 600px;
-            margin: 0 auto;
-            text-align: center;
-            color: white;
-        }
-        
-        #blazor-error-ui h3 {
-            margin: 1rem 0;
-            font-size: 1.5rem;
-        }
-        
-        #blazor-error-ui p {
-            margin-bottom: 1.5rem;
-            opacity: 0.9;
-        }
-        
-        #blazor-error-ui .reload {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: #4f46e5;
-            color: white;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-        
-        #blazor-error-ui .reload:hover {
-            background: #4338ca;
-        }
-        
+
+            #blazor-error-ui .error-content {
+                max-width: 600px;
+                margin: 0 auto;
+                text-align: center;
+                color: white;
+            }
+
+            #blazor-error-ui h3 {
+                margin: 1rem 0;
+                font-size: 1.5rem;
+            }
+
+            #blazor-error-ui p {
+                margin-bottom: 1.5rem;
+                opacity: 0.9;
+            }
+
+            #blazor-error-ui .reload {
+                display: inline-block;
+                padding: 0.75rem 1.5rem;
+                background: #4f46e5;
+                color: white;
+                text-decoration: none;
+                border-radius: 0.5rem;
+                font-weight: 500;
+                transition: background 0.2s;
+            }
+
+                #blazor-error-ui .reload:hover {
+                    background: #4338ca;
+                }
+
         .dismiss-error {
             position: absolute;
             top: 1rem;
@@ -119,14 +119,18 @@
             opacity: 0.7;
             transition: opacity 0.2s;
         }
-        
-        .dismiss-error:hover {
-            opacity: 1;
-        }
+
+            .dismiss-error:hover {
+                opacity: 1;
+            }
     </style>
-    
+
     <script src="js/theme.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
+
 </body>
 
 </html>
+
+
+
