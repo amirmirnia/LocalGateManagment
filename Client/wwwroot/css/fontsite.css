@@ -1,0 +1,149 @@
+﻿
+/*WebYekanFont*/
+@font-face {
+    font-family: 'IRANSansWebMedium';
+    src: url('../fonts/font/IRANSansWeb(FaNum)_Medium.eot') format('eot'), /* IE6–8 */
+    url('../fonts/font/IRANSansWeb(FaNum)_Medium.woff2') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/font/IRANSansWeb(FaNum)_Medium.ttf') format('truetype'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+
+
+/*Iransans*/
+@font-face {
+    font-family: 'IransansBold';
+    src: url('../fonts/font/Iran Sans X Pro/IRANSansXFaNum-Bold.ttf') format('truetype'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+
+@font-face {
+    font-family: 'IransansMedium';
+    src: url('../fonts/font/Iran Sans X Pro/IRANSansXFaNum-Medium.ttf') format('truetype'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+/*Iranyekan*/
+@font-face {
+    font-family: 'IranYekanBold';
+    src: url('../fonts/font/Iran Yekan X Pro/IRANYekanXFaNum-Bold.ttf') format('truetype'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+
+@font-face {
+    font-family: 'IranYekanMedium';
+    src: url('../fonts/font/Iran Yekan X Pro/IRANYekanXFaNum-Medium.ttf') format('truetype'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+/*RokhFaNum-SemiBold*/
+@font-face {
+    font-family: 'Rokh';
+    src: url('../fonts/font/RokhFaNum-SemiBold.ttf') format('truetype'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+/*RokhFaNum-SemiBold*/
+@font-face {
+    font-family: 'RokhBold';
+    src: url('../fonts/font/RokhFaNum-Bold.ttf') format('truetype'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+/*RokhFaNum-SemiBold*/
+@font-face {
+    font-family: 'RokhUltraBold';
+    src: url('../fonts/font/RokhFaNum-UltraBold.ttf') format('truetype'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+/*Consolas*/
+@font-face {
+    font-family: 'IranNastaliq';
+    src: url('../fonts/font/IranNastaliq.ttf'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+/*BMitra*/
+
+@font-face {
+    font-family: 'B Mitra';
+    src: url('../fonts/font/BMitra.ttf'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+/*B-NAZANIN*/
+
+@font-face {
+    font-family: 'B Nazanin';
+    src: url('../fonts/font/BNazanin.ttf'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+/*BLotus*/
+
+@font-face {
+    font-family: 'B Lotus';
+    src: url('../fonts/font/BLotus.ttf'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+/*Consolas*/
+
+@font-face {
+    font-family: 'Consolas';
+    src: url('../fonts/font/Consolas.TTF'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+
+/*times-new-roman*/
+
+@font-face {
+    font-family: 'Times New Roman';
+    src: url('../fonts/font/times_0.ttf'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+@font-face {
+    font-family: 'Courier';
+    src: url('../fonts/font/cour.ttf'); /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+
+/*StartExample*/
+body {
+    font-family: IRANSansWebMedium,IranYekanMedium;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: justify;
+}
+
+.mainmenu {
+    font-family: IRANSansWebMedium,IranYekanMedium;
+    font-size: 14px;
+    font-weight: normal;
+}
+/*EndExample*/
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: IranYekanBold,IransansBold;
+    font-size: 19px;
+    font-weight: normal;
+    padding: 1%;
+}
+
+p {
+    font-family: IRANSansWebMedium,IranYekanMedium,Rokh;
+    font-size: 14px;
+    font-weight: normal;
+}
+li {
+    font-family: IRANSansWebMedium,IranYekanMedium,Rokh;
+    font-size: 14px;
+    font-weight: normal;
+}
+a {
+    font-family: IRANSansWebMedium,IranYekanMedium,Rokh;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+input {
+    font-family: IRANSansWebMedium,IranYekanMedium,Rokh;
+    font-size: 14px;
+    font-weight: normal;
+}
+textarea {
+    font-family: IRANSansWebMedium,IranYekanMedium,Rokh;
+    font-size: 14px;
+    font-weight: normal;
+}
+td {
+    font-family: IRANSansWebMedium,IranYekanMedium,Rokh;
+    font-size: 14px;
+    font-weight: normal;
+}
+th {
+    font-family: IRANSansWebMedium,IranYekanMedium,Rokh;
+    font-size: 14px;
+    font-weight: normal;
+}
+button {
+    font-family: IRANSansWebMedium,IranYekanMedium,Rokh;
+    font-size: 14px;
+    font-weight: normal;
+}

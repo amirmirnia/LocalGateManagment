@@ -6,6 +6,10 @@ using System.Reflection;
 using ServicesGateManagment.Client.Pages;
 using System.Text.Json;
 using ServicesGateManagment.Server.Handlers;
+using ServicesGateManagment.Shared.Models.Vehicles;
+using AutoMapper;
+using Humanizer;
+using ServicesGateManagment.Shared.Models.ViewModel.Vehicles;
 
 namespace VehicleDataFetcherBlazor.Controllers;
 
@@ -97,5 +101,32 @@ public class VehicleInquireController : ControllerBase
         }
     }
 
+    [HttpGet("GetAllRequestVehicle")]
+    public async Task<ActionResult<List<VehicleInquireRequestJsonVM>>> GetAllRequestVehicle()
+    {
+        try
+        {
+            var result = await _vehicleInquireService.GetAllRequestVehicle(); 
+            return Ok(result);
+        }
+        catch (Exception)
+        {
+            throw; // یا می‌توانید خطا را مدیریت کنید و پاسخ مناسب برگردانید
+        }
 
+    }
+    [HttpGet("CountVehicleInFileJson")]
+    public async Task<ActionResult<int>> CountVehicleInFileJson()
+    {
+        try
+        {
+            var result = await _vehicleInquireService.CountVehicleInFileJson("data.json");
+            return Ok(result);
+        }
+        catch (Exception)
+        {
+            throw; // یا می‌توانید خطا را مدیریت کنید و پاسخ مناسب برگردانید
+        }
+
+    }
 }

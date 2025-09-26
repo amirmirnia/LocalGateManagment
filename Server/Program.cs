@@ -3,6 +3,7 @@ using Services.BackGround;
 using ServicesGateManagment.Server;
 using ServicesGateManagment.Server.Handlers;
 using ServicesGateManagment.Shared.DBContext;
+using ServicesGateManagment.Shared.Models.Mapping;
 using YourProject.Services;
 using IApiDataService = ServicesGateManagment.Server.IApiDataService;
 
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 var apiKey = builder.Configuration.GetValue<string>("ApiSquretySettings:ApiKey");
 var TargetUrl = builder.Configuration.GetValue<string>("ApiSettings:TargetUrl");
 
+builder.Services.AddAutoMapper(typeof(Mapping).Assembly);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 

@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using ServicesGateManagment.Shared;
 using ServicesGateManagment.Shared.Models.Common;
+using ServicesGateManagment.Shared.Models.ViewModel.Vehicles;
 
 namespace ServicesGateManagment.Client.Services;
 
@@ -13,6 +14,24 @@ public class VehicleService: IVehicleService
     {
         _httpClient = httpClient;
         _logger = logger;
+    }
+
+    public async Task<int> CountVehicleInFileJson()
+    {
+
+        try
+        {
+            var response = await _httpClient.GetAsync("api/VehicleInquire/CountVehicleInFileJson");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<int>();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading configurations from API");
+            throw;
+        }
     }
 
     public async Task<VehicleInquireResultVm> CreateVehicleInquire(CreateVehicleInquireRequest model)
@@ -39,6 +58,23 @@ public class VehicleService: IVehicleService
 
             var configurations = await response.Content.ReadFromJsonAsync<VehicleInquireResultVm>();
             return configurations ?? null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading configurations from API");
+            throw;
+        }
+    }
+
+    public async Task<List<VehicleInquireRequestJsonVM>> GetAllRequestVehicle()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("api/VehicleInquire/GetAllRequestVehicle");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<List<VehicleInquireRequestJsonVM>>();
+            return result ?? null;
         }
         catch (Exception ex)
         {

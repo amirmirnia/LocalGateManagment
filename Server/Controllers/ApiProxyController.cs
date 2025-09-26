@@ -58,11 +58,3 @@ public class ApiProxyController : ControllerBase
     }
 }
 
-
-
-public class FetchDataResponse
-{
-    public string Data { get; set; } = string.Empty;
-    public bool Success { get; set; }
-    public string Error { get; set; } = string.Empty;
-}

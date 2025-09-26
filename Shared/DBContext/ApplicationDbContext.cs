@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ServicesGateManagment.Shared.Common;
 using ServicesGateManagment.Shared.Models.Vehicles;
+using ServicesGateManagment.Shared.Models.ViewModel.Vehicles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
