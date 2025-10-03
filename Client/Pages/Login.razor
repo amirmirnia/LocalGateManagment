@@ -1,0 +1,75 @@
+﻿@page "/login"
+@layout EmptyLayout
+@using Microsoft.AspNetCore.Components.Forms
+@using ServicesGateManagment.Client.Services
+@using System.Net.Http.Headers
+@using ServicesGateManagment.Shared.Models.ViewModel.User
+@using Blazored.LocalStorage
+@using ServicesGateManagment.Client.Services.Core
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IUser _user
+@inject CustomAuthStateProvider AuthStateProvider
+
+@inject ILocalStorageService LocalStorage
+<link href="css/Login.css" rel="stylesheet" />
+
+<div class="login-page">
+    <div class="login-card">
+        <!-- لوگو در بالای فرم -->
+        <img src="/Img/hospad2.png" alt="لوگو" class="login-logo" />
+
+        <h2>ورود به سیستم</h2>
+
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="error-message" />
+
+            <div class="mb-6">
+                <label>نام کاربری</label>
+                <InputText @bind-Value="loginModel.Username" type="Text"/>
+            </div>
+
+            <div class="mb-6">
+                <label>رمز عبور</label>
+                <InputText @bind-Value="loginModel.Password" type="password" />
+            </div>
+
+            <button type="submit">ورود</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <p class="error-message">@message</p>
+        }
+    </div>
+</div>
+
+
+@code {
+    private LoginDto loginModel = new();
+    private string message;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var token = await _user.Login(loginModel);
+
+            if (token != null)
+            {
+                await LocalStorage.SetItemAsync("authToken", token);
+                Http.DefaultRequestHeaders.Authorization =
+                 new AuthenticationHeaderValue("Bearer", token);
+                message = "ورود موفقیت‌آمیز بود!";
+                AuthStateProvider.NotifyUserAuthentication(token);
+                Navigation.NavigateTo("/", forceLoad: true);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            message = $"خطا: {ex.Message}";
+        }
+    }
+}

@@ -1,0 +1,98 @@
+﻿
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #d57924, #89aff5);
+}
+
+.login-card {
+    width: 100%;
+    display: flex;
+    max-width: 400px;
+    background-color: #ffffff;
+    border-radius: 2rem;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.5s;
+    flex-direction: column;
+    align-items: center;
+}
+
+    .login-card:hover {
+        transform: scale(1.05);
+    }
+
+    .login-card h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #1f2937; /* gray-800 */
+    }
+
+    .login-card label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #374151; /* gray-700 */
+    }
+
+    .login-card input[type="text"],
+    .login-card input[type="password"] {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db; /* gray-300 */
+        border-radius: 1rem;
+        outline: none;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+
+        .login-card input[type="text"]:focus,
+        .login-card input[type="password"]:focus {
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+    .login-card button {
+        width: 100%;
+        padding: 0.75rem;
+        font-weight: 700;
+        border-radius: 1rem;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(90deg, #dd9550, #d57924);
+        color: white;
+        font-size: 1rem;
+        margin-top: 1rem;
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+        .login-card button:hover {
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            transform: translateY(-2px);
+        }
+
+    .login-card .error-message {
+        text-align: center;
+        color: #ef4444; /* red-500 */
+        margin-top: 1rem;
+        font-weight: 500;
+    }
+.login-logo {
+    width: 15em; /* اندازه لوگو */
+    margin: 0 auto 1.5rem auto;
+    opacity: 0;
+    transform: translateY(-50px);
+    animation: dropIn 1s forwards;
+}
+
+@keyframes dropIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

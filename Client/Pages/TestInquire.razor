@@ -1,4 +1,6 @@
 ﻿@page "/test-inquire"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @using ServicesGateManagment.Shared
 @using Newtonsoft.Json
 @inject HttpClient Http

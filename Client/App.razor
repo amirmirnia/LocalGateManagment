@@ -1,14 +1,28 @@
-<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <div class="alert alert-danger" role="alert">
-                <h4 class="alert-heading">Page not found</h4>
-                <p>Sorry, there's nothing at this address.</p>
-            </div>
-        </LayoutView>
-    </NotFound>
-</Router>
+@using Microsoft.AspNetCore.Components.Authorization
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    @if (context.User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <p>??? ???? ?????? ?? ??? ???? ?? ??????.</p>
+                    }
+                    else
+                    {
+                        <ServicesGateManagment.Client.Pages.RedirectToLogin />
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>???? ???? ???.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+}

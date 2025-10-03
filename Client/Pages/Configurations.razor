@@ -1,4 +1,6 @@
 ﻿@page "/configurations"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @using ServicesGateManagment.Shared
 @using ServicesGateManagment.Client.Services
 @inject ILogger<Configurations> Logger

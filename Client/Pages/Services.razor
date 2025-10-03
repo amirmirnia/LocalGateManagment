@@ -1,4 +1,6 @@
 ﻿@page "/services"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @using ServicesGateManagment.Client.Services
 @inject IConfigService ConfigService
 @inject IJSRuntime JSRuntime

@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServicesGateManagment.Shared;
 
 namespace ServicesGateManagment.Server.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class ConfigurationController : ControllerBase
 {
