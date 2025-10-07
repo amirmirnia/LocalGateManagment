@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ServicesGateManagment.Shared.Common;
+using ServicesGateManagment.Shared.Models.Users;
 using ServicesGateManagment.Shared.Models.Vehicles;
 using ServicesGateManagment.Shared.Models.ViewModel.Vehicles;
 using System;
@@ -19,7 +20,13 @@ namespace ServicesGateManagment.Shared.DBContext
 
         // DbSet برای مدل‌های شما
         public DbSet<VehicleInquireRequestJson> VehicleInquireRequestJson { get; set; }
+        public DbSet<User> Users { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.SeedInitialData();
+        }
         public override int SaveChanges()
         {
             UpdateAuditFields();

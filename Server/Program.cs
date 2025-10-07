@@ -43,8 +43,11 @@ builder.Services.AddHttpClient("ApiClient", client =>
 
 builder.Services.AddSingleton<ApiService>();
 
+builder.Services.AddAutoMapper(typeof(Mapping));
+
 builder.Services.AddScoped<IVehicleInquireService, VehicleInquireService>();
 builder.Services.AddScoped<IApiDataService, ApiDataService>();
+builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<JwtTokenService>();
 

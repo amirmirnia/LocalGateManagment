@@ -1,0 +1,85 @@
+﻿@page "/Listusers"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@using System.ComponentModel.DataAnnotations
+@using ServicesGateManagment.Client.Services
+@inject NavigationManager NavManager
+@inject IUser _User
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4>لیست کاربران</h4>
+                    <button class="btn btn-success" @onclick="AddUser">کاربر جدید</button>
+                </div>
+                <div class="card-body">
+                    @if (ListUser.ListUser == null || ListUser.ListUser.Count == 0)
+                    {
+                        <div class="alert alert-info">هیچ کاربری ثبت نشده است.</div>
+                    }
+                    else
+                    {
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>نام</th>
+                                    <th>نام خانوادگی</th>
+                                    <th>ایمیل</th>
+                                    <th>نقش</th>
+                                    <th>اقدامات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in ListUser.ListUser)
+                                {
+                                    <tr>
+                                        <td>@user.FirstName</td>
+                                        <td>@user.LastName</td>
+                                        <td>@user.Email</td>
+                                        <td>@user.Role</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info me-1" @onclick="() => EditUser(user)">ویرایش</button>
+                                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteUser(user)">حذف</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ListUserDto ListUser = new ListUserDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        ListUser = await _User.ListUser();
+
+
+    }
+    private void AddUser()
+    {
+        NavManager.NavigateTo("/Registeruser");
+    }
+
+    private void EditUser(UserDto user)
+    {
+        NavManager.NavigateTo($"/Updateuser/{user.Id}");
+    }
+
+    private void DeleteUser(UserDto user)
+    {
+        // if (users.Contains(user))
+        // {
+        //     users.Remove(user);
+        // }
+    }
+}

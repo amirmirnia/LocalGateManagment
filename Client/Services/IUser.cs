@@ -7,7 +7,9 @@ namespace ServicesGateManagment.Client.Services
     public interface IUser
     {
         Task<string> Login(LoginDto model);
-
+        Task<bool> RegisterUser(RegisteUserDto registeUserDto);
+        Task<ListUserDto> ListUser();
+        Task<UserDto> GetUserById(int id); 
 
     }
 }

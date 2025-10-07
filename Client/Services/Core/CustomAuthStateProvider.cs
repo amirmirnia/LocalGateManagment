@@ -1,12 +1,11 @@
 ﻿using System.Security.Claims;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace ServicesGateManagment.Client.Services.Core
 {
-
-
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
@@ -20,19 +19,15 @@ namespace ServicesGateManagment.Client.Services.Core
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var token = await _localStorage.GetItemAsStringAsync("authToken");
+            var token = await _localStorage.GetItemAsync<string>("authToken");
 
             var identity = new ClaimsIdentity();
             if (!string.IsNullOrWhiteSpace(token))
             {
-                // ست کردن توکن روی HttpClient
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                // اینجا میشه توکن رو دیکد کرد و Claims واقعی رو استخراج کرد
-                identity = new ClaimsIdentity(new[]
-                {
-                new Claim(ClaimTypes.Name, "User")
-            }, "jwtAuth");
+                var claims = JwtParser.ParseClaimsFromJwt(token);
+                identity = new ClaimsIdentity(claims, "jwtAuth");
             }
 
             var user = new ClaimsPrincipal(identity);
@@ -41,14 +36,19 @@ namespace ServicesGateManagment.Client.Services.Core
 
         public void NotifyUserAuthentication(string token)
         {
-            var identity = new ClaimsIdentity(new[]
-            {
-            new Claim(ClaimTypes.Name, "User")
-        }, "jwtAuth");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+            var claims = JwtParser.ParseClaimsFromJwt(token)
+                .Select(c =>
+                    c.Type.Contains("role") ? new Claim(ClaimTypes.Role, c.Value) :
+                    c.Type.Contains("name") ? new Claim(ClaimTypes.Name, c.Value) : c);
+
+            var identity = new ClaimsIdentity(claims, "jwtAuth");
             var user = new ClaimsPrincipal(identity);
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
+
+
 
         public void NotifyUserLogout()
         {
@@ -58,4 +58,24 @@ namespace ServicesGateManagment.Client.Services.Core
         }
     }
 
+    public static class JwtParser
+    {
+        public static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+        {
+            var payload = jwt.Split('.')[1];
+            var jsonBytes = ParseBase64WithoutPadding(payload);
+            var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
+            return keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString()));
+        }
+
+        private static byte[] ParseBase64WithoutPadding(string base64)
+        {
+            switch (base64.Length % 4)
+            {
+                case 2: base64 += "=="; break;
+                case 3: base64 += "="; break;
+            }
+            return Convert.FromBase64String(base64);
+        }
+    }
 }

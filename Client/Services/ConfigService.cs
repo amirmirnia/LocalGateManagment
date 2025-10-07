@@ -19,6 +19,7 @@ public class ConfigService: IConfigService
     {
         try
         {
+            _logger.LogInformation("Auth header: {Header}", _httpClient.DefaultRequestHeaders.Authorization?.ToString());
             var response = await _httpClient.GetAsync("api/configuration");
             response.EnsureSuccessStatusCode();
             
