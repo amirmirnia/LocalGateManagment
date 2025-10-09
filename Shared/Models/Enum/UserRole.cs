@@ -9,6 +9,7 @@ namespace ServicesGateManagment.Shared.Models.Enum
     public enum UserRole
     {
         Admin,
+        Manager,
         User,
         Guest
     }

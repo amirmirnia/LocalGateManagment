@@ -1,10 +1,6 @@
 ﻿@page "/Listusers"
-@using Microsoft.AspNetCore.Authorization
+@inherits AppComponentBase
 @attribute [Authorize]
-@using System.ComponentModel.DataAnnotations
-@using ServicesGateManagment.Client.Services
-@inject NavigationManager NavManager
-@inject IUser _User
 
 <div class="container mt-4">
     <div class="row">
@@ -41,7 +37,13 @@
                                         <td>@user.Role</td>
                                         <td>
                                             <button class="btn btn-sm btn-info me-1" @onclick="() => EditUser(user)">ویرایش</button>
-                                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteUser(user)">حذف</button>
+                                            @{
+                                                if (user.Role!=UserRole.Admin)
+                                                {
+                                                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteUser(user)">حذف</button>
+                                                }
+                                            }
+
                                         </td>
                                     </tr>
                                 }
@@ -61,9 +63,13 @@
     {
         await base.OnInitializedAsync();
 
+        await load();
+
+
+    }
+    protected async Task load()
+    {
         ListUser = await _User.ListUser();
-
-
     }
     private void AddUser()
     {
@@ -75,11 +81,17 @@
         NavManager.NavigateTo($"/Updateuser/{user.Id}");
     }
 
-    private void DeleteUser(UserDto user)
+    private async Task DeleteUser(UserDto user)
     {
-        // if (users.Contains(user))
-        // {
-        //     users.Remove(user);
-        // }
+        bool confirmed = await ConfirmService.Confirm("حذف کاربر", "آیا مطمئن هستید حذف شود؟");
+        if (confirmed)
+        {
+            if (user.Role != UserRole.Admin)
+            {
+                await _User.DeleteUser(user.Id);
+            }
+            await load();
+        }
+        
     }
 }

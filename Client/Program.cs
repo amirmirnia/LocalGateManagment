@@ -11,7 +11,20 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddHttpClient("ServicesGateManagment.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+builder.Services.AddHttpClient("ServicesGateManagment.ServerAPI", client =>
+{
+    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+
+    // 🔽 این بخش را اضافه کن:
+    client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue
+    {
+        NoCache = true,
+        NoStore = true,
+        MustRevalidate = true
+    };
+});
+builder.Services.AddSingleton<ConfirmService>();
+builder.Services.AddSingleton<AlertService>();
 builder.Services.AddScoped<IConfigService, ConfigService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IApiDataService, ApiDataService>();

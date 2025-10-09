@@ -1,16 +1,6 @@
 ﻿@page "/"
-@using Microsoft.AspNetCore.Authorization
+@inherits AppComponentBase
 @attribute [Authorize]
-@using ServicesGateManagment.Client.Services
-@using ServicesGateManagment.Shared
-@using ServicesGateManagment.Shared.Models.Common
-@inject IConfigService ConfigService
-@inject IApiDataService ApiDataService
-@inject IVehicleService VehicleService
-@inject IJSRuntime JSRuntime
-@inject ILogger<Index> Logger
-@inject NavigationManager NavManager
-@inject HttpClient Http
 
 
 <PageTitle>سرویس مدیریت آفلاین شهرک مسکونی-هوشپاد</PageTitle>
@@ -253,8 +243,8 @@
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error loading configurations");
-            ShowMessage("Error loading configurations", true);
+            ShowMessage("مشکل در بارگذاری صفحه", true);
+
         }
 
 
@@ -273,11 +263,10 @@
         {
             if (string.IsNullOrWhiteSpace(apiEndpoint))
             {
-                errorMessage = "Please enter an API endpoint";
+                errorMessage = "لطفا آدرس مقصد را وارد کنید";
                 return;
             }
 
-            Logger.LogInformation($"Fetching data from: {apiEndpoint}");
             FetchDataRequest request = new FetchDataRequest()
                 {
                     Endpoint = apiEndpoint
@@ -287,13 +276,12 @@
             var bytes = System.Text.Encoding.UTF8.GetBytes(fetchedData);
             dataSize = FormatFileSize(bytes.Length);
 
-            successMessage = $"Data fetched successfully! Size: {dataSize}";
-            Logger.LogInformation(successMessage);
+            successMessage = $"داده با موفقیت دریافت شد:حجم: {dataSize}";
         }
         catch (Exception ex)
         {
             errorMessage = ex.Message;
-            Logger.LogError(ex, "Error fetching data");
+            Logger.LogError(ex, "مشکل در دریافت داده");
         }
         finally
         {
@@ -306,7 +294,7 @@
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {
-                errorMessage = "Please enter a file name";
+                errorMessage = "نام فایل را وارد کنید";
                 return;
             }
 
@@ -315,12 +303,11 @@
             var base64 = Convert.ToBase64String(bytes);
 
             await JSRuntime.InvokeVoidAsync("downloadFileFromBase64", finalFileName, base64);
-            successMessage = $"File '{finalFileName}' downloaded successfully!";
+            successMessage = $"فایل '{finalFileName}' با موفقیت دانلود شد!";
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error saving file: {ex.Message}";
-            Logger.LogError(ex, "Error saving file");
+            errorMessage = $"مشکل در ذخیره: {ex.Message}";
         }
     }
     private string FormatFileSize(long bytes)

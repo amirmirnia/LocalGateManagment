@@ -23,6 +23,23 @@ public class UserService : IUser
 
     }
 
+    public async Task<bool> DeleteUser(int id)
+    {
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"api/auth/DeleteUser/{id}");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<bool>();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading configurations from API");
+            return false;
+        }
+    }
+
     public async Task<UserDto> GetUserById(int id)
     {
         try
@@ -79,6 +96,24 @@ public class UserService : IUser
         try
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/RegisterUser", registeUserDto);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading configurations from API");
+            return false;
+        }
+    }
+
+    public async Task<bool> UpdateUser(UpdateUserDto user)
+    {
+        try
+        {
+            var response = await _httpClient.PutAsJsonAsync("api/auth/UpdateUser", user);
             if (response.IsSuccessStatusCode)
             {
                 return true;

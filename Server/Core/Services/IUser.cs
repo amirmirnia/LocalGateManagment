@@ -9,4 +9,6 @@ public interface IUser
     Task<bool> RegisterUser(User user);
     Task<ListUserDto> ListUser();
     Task<UserDto> GetUserById(int id);
+    Task<bool> DeleteUser(int id);
+    Task<bool> UpdateUser(User user);
 }

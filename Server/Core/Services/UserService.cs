@@ -8,6 +8,7 @@ using ServicesGateManagment.Server.Handlers;
 using ServicesGateManagment.Shared;
 using ServicesGateManagment.Shared.DBContext;
 using ServicesGateManagment.Shared.Models.Common;
+using ServicesGateManagment.Shared.Models.Enum;
 using ServicesGateManagment.Shared.Models.Users;
 using ServicesGateManagment.Shared.Models.ViewModel.User;
 using System.Text;
@@ -68,7 +69,7 @@ public class UserService : IUser
     {
         try
         {
-            var user = _db.Users.Where(p => p.Id == id);
+            var user = _db.Users.FirstOrDefault(p => p.Id == id);
 
             if (user != null)
             {
@@ -84,6 +85,58 @@ public class UserService : IUser
             // بهتره لاگ بگیری یا حداقل Exception رو نگه داری
             Console.WriteLine(ex.Message);
             return new UserDto();
+        }
+    }
+
+    public async Task<bool> DeleteUser(int id)
+    {
+        try
+        {
+            var user = _db.Users.FirstOrDefault(p=>p.Id==id);
+            if (user!=null)
+            {
+                if (user.Role != UserRole.Admin)
+                {
+                    _db.Remove(user);
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch (Exception)
+        {
+
+            return false;
+        }
+    }
+
+    public async Task<bool> UpdateUser(User user)
+    {
+        try
+        {
+            var Model = _db.Users.FirstOrDefault(p => p.Id == user.Id);
+            if (Model != null)
+            {
+                if (Model.Role != UserRole.Admin)
+                {
+                    Model.Role = user.Role;
+
+                }
+                Model.Email = user.Email;
+                Model.FirstName = user.FirstName;
+                Model.LastName = user.LastName;
+
+                _db.Update(Model);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+        catch (Exception)
+        {
+
+            return false;
         }
     }
 }

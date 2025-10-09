@@ -68,14 +68,45 @@ namespace ServicesGateManagment.Server.Controllers
                 return BadRequest();
             }
         }
-        [HttpGet("GetUser")]
-        public async Task<IActionResult> GetUser(int Id)
+        [HttpGet("GetUser/{id}")]
+        public async Task<IActionResult> GetUser([FromRoute] int id)
         {
 
             try
             {
-                var list =await _User.ListUser();
-                return Ok(list);
+                var user =await _User.GetUserById(id);
+                return Ok(user);
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+        }
+        [HttpDelete("DeleteUser/{Id}")]
+        public async Task<IActionResult> DeleteUser(int Id)
+        {
+
+            try
+            {
+                var user = await _User.DeleteUser(Id);
+                return Ok(user);
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+        }
+        [HttpPut("UpdateUser")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateUser)
+        {
+
+            try
+            {
+                var finalmodel = _mapper.Map<User>(updateUser);
+                var user = await _User.UpdateUser(finalmodel);
+                return Ok(user);
             }
             catch (Exception)
             {

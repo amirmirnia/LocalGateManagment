@@ -1,0 +1,36 @@
+﻿@inject AlertService AlertService
+
+@if (isVisible)
+{
+    <div class="alert-backdrop">
+        <div class="alert-box">
+            @message
+        </div>
+    </div>
+}
+
+@code {
+    private bool isVisible = false;
+    private string message = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        AlertService.OnShow += ShowAlert;
+    }
+
+    private async void ShowAlert(string msg)
+    {
+        message = msg;
+        isVisible = true;
+        StateHasChanged();
+
+        await Task.Delay(2000); // 2 ثانیه نمایش
+        isVisible = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        AlertService.OnShow -= ShowAlert;
+    }
+}

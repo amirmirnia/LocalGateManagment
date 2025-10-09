@@ -9,7 +9,9 @@ namespace ServicesGateManagment.Client.Services
         Task<string> Login(LoginDto model);
         Task<bool> RegisterUser(RegisteUserDto registeUserDto);
         Task<ListUserDto> ListUser();
-        Task<UserDto> GetUserById(int id); 
+        Task<UserDto> GetUserById(int id);
+        Task<bool> DeleteUser(int id);
+        Task<bool> UpdateUser(UpdateUserDto user);
 
     }
 }

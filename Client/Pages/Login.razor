@@ -1,17 +1,8 @@
 ﻿@page "/login"
 @layout EmptyLayout
-@using Microsoft.AspNetCore.Components.Forms
-@using ServicesGateManagment.Client.Services
-@using System.Net.Http.Headers
-@using ServicesGateManagment.Shared.Models.ViewModel.User
-@using Blazored.LocalStorage
-@using ServicesGateManagment.Client.Services.Core
-@inject HttpClient Http
-@inject NavigationManager Navigation
-@inject IUser _user
-@inject CustomAuthStateProvider AuthStateProvider
+@inherits AppComponentBase
 
-@inject ILocalStorageService LocalStorage
+
 <link href="css/Login.css" rel="stylesheet" />
 
 <div class="login-page">
@@ -54,7 +45,7 @@
     {
         try
         {
-            var token = await _user.Login(loginModel);
+            var token = await _User.Login(loginModel);
 
             if (token != null)
             {
@@ -63,7 +54,7 @@
                  new AuthenticationHeaderValue("Bearer", token);
                 message = "ورود موفقیت‌آمیز بود!";
                 AuthStateProvider.NotifyUserAuthentication(token);
-                Navigation.NavigateTo("/", forceLoad: true);
+                NavManager.NavigateTo("/", forceLoad: true);
             }
 
         }

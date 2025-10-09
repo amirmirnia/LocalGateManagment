@@ -1,4 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@inject ConfirmService ConfirmService
+
+<Alert />
+<ConfirmModal @ref="confirmModal" OnConfirmed="OnConfirmed" />
 
 <div class="app-layout">
     <!-- Top Navigation Bar -->
@@ -131,6 +135,9 @@
     private bool sidebarCollapsed = false;
     private bool isDarkMode = false;
     private string currentPath = "/";
+    private ConfirmModal confirmModal;
+    private EventCallback<bool> pendingCallback;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -138,6 +145,30 @@
         // Initialize theme from localStorage
         var currentTheme = await JSRuntime.InvokeAsync<string>("ThemeManager.getCurrent");
         isDarkMode = currentTheme == "dark";
+
+        ConfirmService.OnConfirm += async (title, message) =>
+       {
+           var tcs = new TaskCompletionSource<bool>();
+           ShowConfirm(title, message, EventCallback.Factory.Create<bool>(this, (result) =>
+           {
+               tcs.SetResult(result);
+           }));
+           return await tcs.Task;
+       };
+    }
+
+    public void ShowConfirm(string title, string message, EventCallback<bool> callback)
+    {
+        pendingCallback = callback;
+        confirmModal.Show(title, message);
+    }
+
+    private async Task OnConfirmed(bool confirmed)
+    {
+        if (pendingCallback.HasDelegate)
+        {
+            await pendingCallback.InvokeAsync(confirmed);
+        }
     }
 
     [Inject]

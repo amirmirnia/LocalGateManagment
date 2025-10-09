@@ -1,12 +1,6 @@
 ﻿@page "/Registeruser"
-@using Microsoft.AspNetCore.Components.Forms
+@inherits AppComponentBase
 @attribute [Authorize]
-@inject IJSRuntime JSRuntime
-@inject IUser User
-@inject NavigationManager NavManager
-@inject HttpClient Http
-
-
 
 <div class="container mt-4">
     <div class="row">
@@ -76,12 +70,7 @@
                             </button>
                         </div>
 
-                        @if (!string.IsNullOrEmpty(successMessage))
-                        {
-                            <div class="alert alert-success">
-                                @successMessage
-                            </div>
-                        }
+
 
                         @if (!string.IsNullOrEmpty(errorMessage))
                         {
@@ -99,26 +88,30 @@
 @code {
     private RegisteUserDto newUser = new RegisteUserDto();
     private bool isLoading = false;
-    private string successMessage;
     private string errorMessage;
 
     private async Task HandleValidSubmit()
     {
         isLoading = true;
-        successMessage = string.Empty;
         errorMessage = string.Empty;
 
         try
         {
-            await User.RegisterUser(newUser);
-
-            // فرض کنید اینجا درخواست به API زده می‌شود
-            successMessage = $"کاربر {newUser.FirstName} {newUser.LastName} با موفقیت ثبت شد!";
-            newUser = new RegisteUserDto(); // پاک کردن فرم بعد از ثبت موفق
+            if (await User.RegisterUser(newUser))
+            {
+                AlertService.Show("ثبت کاربر انجام شد");
+                NavManager.NavigateTo("/Listusers");
+            }
+            else
+            {
+                errorMessage="ثبت کاربر با مشکل مواجه شد";
+            }
+            
+            NavManager.NavigateTo("/Listusers");
         }
         catch (Exception ex)
         {
-            errorMessage = $"خطا در ثبت: {ex.Message}";
+            errorMessage=$"خطا در ثبت: {ex.Message}";
         }
         finally
         {
@@ -129,7 +122,6 @@
     private void ClearForm()
     {
         newUser = new RegisteUserDto();
-        successMessage = string.Empty;
         errorMessage = string.Empty;
     }
 }

@@ -1,11 +1,6 @@
 ﻿@page "/Updateuser/{Id}"
-@using Microsoft.AspNetCore.Authorization
+@inherits AppComponentBase
 @attribute [Authorize]
-@using System.ComponentModel.DataAnnotations
-@using Microsoft.AspNetCore.Components.Forms
-@using ServicesGateManagment.Client.Services
-@inject NavigationManager NavManager
-@inject IUser _User
 
 
 <div class="container mt-4">
@@ -16,41 +11,41 @@
                     <h4>ثبت کاربر جدید</h4>
                 </div>
                 <div class="card-body">
-                    <EditForm Model="@newUser" OnValidSubmit="HandleValidSubmit">
+                    <EditForm Model="@User" OnValidSubmit="HandleValidSubmit">
                         <DataAnnotationsValidator />
                         <ValidationSummary />
 
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">نام</label>
-                                <InputText class="form-control" @bind-Value="newUser.FirstName" />
-                                <ValidationMessage For="@(() => newUser.FirstName)" />
+                                <InputText class="form-control" @bind-Value="User.FirstName" />
+                                <ValidationMessage For="@(() => User.FirstName)" />
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">نام خانوادگی</label>
-                                <InputText class="form-control" @bind-Value="newUser.LastName" />
-                                <ValidationMessage For="@(() => newUser.LastName)" />
+                                <InputText class="form-control" @bind-Value="User.LastName" />
+                                <ValidationMessage For="@(() => User.LastName)" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">ایمیل</label>
-                                <InputText type="email" class="form-control" @bind-Value="newUser.Email" />
-                                <ValidationMessage For="@(() => newUser.Email)" />
+                                <InputText type="email" class="form-control" @bind-Value="User.Email" />
+                                <ValidationMessage For="@(() => User.Email)" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">نقش کاربر</label>
-                                <InputSelect class="form-control" @bind-Value="newUser.Role">
+                                <InputSelect class="form-control" @bind-Value="User.Role">
                                     @foreach (var role in Enum.GetValues<UserRole>())
                                     {
                                         <option value="@role">@role</option>
                                     }
                                 </InputSelect>
-                                <ValidationMessage For="@(() => newUser.Role)" />
+                                <ValidationMessage For="@(() => User.Role)" />
                             </div>
                         </div>
 
@@ -69,12 +64,6 @@
 
                         </div>
 
-                        @if (!string.IsNullOrEmpty(successMessage))
-                        {
-                            <div class="alert alert-success">
-                                @successMessage
-                            </div>
-                        }
 
                         @if (!string.IsNullOrEmpty(errorMessage))
                         {
@@ -92,9 +81,9 @@
 @code {
     [Parameter]
     public string Id { get; set; }
-    private UserDto newUser = new UserDto();
+    private UserDto User = new UserDto();
+    private UpdateUserDto UpdateUser;
     private bool isLoading = false;
-    private string successMessage;
     private string errorMessage;
 
     protected override async Task OnInitializedAsync()
@@ -108,31 +97,36 @@
             return;
         }
 
-        newUser = await _User.GetUserById(userId);
+        User = await _User.GetUserById(userId);
     } 
     private async Task HandleValidSubmit()
     {
         isLoading = true;
-        successMessage = string.Empty;
         errorMessage = string.Empty;
 
-        // try
-        // {
+        try
+        {
+            UpdateUser = new UpdateUserDto()
+            {
+                    Email = User.Email,
+                    FirstName = User.FirstName,
+                    LastName = User.LastName,
+                    Role = User.Role,
+                    Id = User.Id
+                    
+            };
+            await _User.UpdateUser(UpdateUser);
 
-        //     await User.RegisterUser(newUser);
-
-        //     // فرض کنید اینجا درخواست به API زده می‌شود
-        //     successMessage = $"کاربر {newUser.FirstName} {newUser.LastName} با موفقیت ثبت شد!";
-        //     newUser = new RegisteUserDto(); // پاک کردن فرم بعد از ثبت موفق
-        // }
-        // catch (Exception ex)
-        // {
-        //     errorMessage = $"خطا در ثبت: {ex.Message}";
-        // }
-        // finally
-        // {
-        //     isLoading = false;
-        // }
+            AlertService.Show($"کاربر {User.FirstName} {User.LastName} با موفقیت ویرایش شد!");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"خطا در ثبت: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
 }
