@@ -1,6 +1,6 @@
 ﻿@page "/Listusers"
 @inherits AppComponentBase
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin,Manager")]
 
 <div class="container mt-4">
     <div class="row">
@@ -37,7 +37,9 @@
                                         <td>@user.Role</td>
                                         <td>
                                             <button class="btn btn-sm btn-info me-1" @onclick="() => EditUser(user)">ویرایش</button>
+                                            <button class="btn btn-sm btn-info me-1" @onclick="() => ChangePasswordUser(user)">تغییر پسورد</button>
                                             @{
+
                                                 if (user.Role!=UserRole.Admin)
                                                 {
                                                     <button class="btn btn-sm btn-danger" @onclick="() => DeleteUser(user)">حذف</button>
@@ -79,6 +81,10 @@
     private void EditUser(UserDto user)
     {
         NavManager.NavigateTo($"/Updateuser/{user.Id}");
+    }
+    private void ChangePasswordUser(UserDto user)
+    {
+        NavManager.NavigateTo($"/ChangePassword/{user.Id}");
     }
 
     private async Task DeleteUser(UserDto user)

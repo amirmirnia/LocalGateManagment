@@ -12,6 +12,7 @@ namespace ServicesGateManagment.Client.Services
         Task<UserDto> GetUserById(int id);
         Task<bool> DeleteUser(int id);
         Task<bool> UpdateUser(UpdateUserDto user);
+        Task<bool> ChangePassword(ChangePasswordDto PasswordModel); 
 
     }
 }

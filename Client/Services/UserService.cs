@@ -23,6 +23,22 @@ public class UserService : IUser
 
     }
 
+    public async Task<bool> ChangePassword(ChangePasswordDto PasswordModel)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/auth/ChangePassword", PasswordModel);
+
+            var result = await response.Content.ReadFromJsonAsync<bool>();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading configurations from API");
+            throw;
+        }
+    }
+
     public async Task<bool> DeleteUser(int id)
     {
         try
@@ -79,7 +95,6 @@ public class UserService : IUser
         try
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/login", model);
-            response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<LoginResultDto>();
             return result.Token;

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesGateManagment.Clien
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesGateManagment.Shared", "Shared\ServicesGateManagment.Shared.csproj", "{7CF01C66-3D31-4B80-99F6-94C125CFB12C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesGateManagment.Core", "ServicesGateManagment.Core\ServicesGateManagment.Core.csproj", "{F76905CF-32DF-4185-9B18-F5E87DD02A13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{7CF01C66-3D31-4B80-99F6-94C125CFB12C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CF01C66-3D31-4B80-99F6-94C125CFB12C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CF01C66-3D31-4B80-99F6-94C125CFB12C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F76905CF-32DF-4185-9B18-F5E87DD02A13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F76905CF-32DF-4185-9B18-F5E87DD02A13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F76905CF-32DF-4185-9B18-F5E87DD02A13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F76905CF-32DF-4185-9B18-F5E87DD02A13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

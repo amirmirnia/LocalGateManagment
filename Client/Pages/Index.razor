@@ -86,7 +86,8 @@
     <!-- Main Content Area -->
     <div class="grid grid-cols-2 gap-lg">
         <!-- Data Fetcher Card -->
-        <div class="card">
+        <AuthorizeView Roles="Admin,Manager">
+             <div class="card">
             <div class="card-header">
                 <h4 class="card-title">دریافت داده از لیارا</h4>
             </div>
@@ -161,6 +162,8 @@
                 }
             </div>
         </div>
+            </AuthorizeView>
+       
 
         <!-- Recent Activity -->
         <div class="card">

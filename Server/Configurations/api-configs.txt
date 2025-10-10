@@ -1,5 +1,5 @@
 # API Configuration File
 # Format: FileName|ApiEndpoint|IntervalMinutes|IsEnabled|LastFetchTime|CreatedAt
 #
-Gate.json|https://daryakenar.ir/api/ServicesGateManagement/access-gates|1|True|2025-10-10 02:33:22|2025-09-22 22:16:20
-data.json|https://daryakenar.ir/api/ServicesGateManagement/access-Vehicles|1|True|2025-10-10 02:33:27|2025-09-22 22:08:11
+Gate.json|https://daryakenar.ir/api/ServicesGateManagement/access-gates|1|True|2025-10-10 13:07:59|2025-09-22 22:16:20
+data.json|https://daryakenar.ir/api/ServicesGateManagement/access-Vehicles|1|True|2025-10-10 13:08:03|2025-09-22 22:08:11

@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using static System.Net.WebRequestMethods;
 
 namespace ServicesGateManagment.Client.Services.Core
 {
@@ -52,6 +53,17 @@ namespace ServicesGateManagment.Client.Services.Core
 
         public void NotifyUserLogout()
         {
+            //var identity = new ClaimsIdentity();
+            //var user = new ClaimsPrincipal(identity);
+            //NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+
+            // 1. حذف توکن از LocalStorage
+             _localStorage.RemoveItemAsync("authToken");
+
+            // 2. پاک کردن هدر Authorization
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+
+            // 3. خالی کردن Claims و اعلام تغییر وضعیت
             var identity = new ClaimsIdentity();
             var user = new ClaimsPrincipal(identity);
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));

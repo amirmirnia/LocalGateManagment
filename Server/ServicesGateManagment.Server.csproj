@@ -21,6 +21,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Client\ServicesGateManagment.Client.csproj" />
+		<ProjectReference Include="..\ServicesGateManagment.Core\ServicesGateManagment.Core.csproj" />
 		<ProjectReference Include="..\Shared\ServicesGateManagment.Shared.csproj" />
 	</ItemGroup>
 

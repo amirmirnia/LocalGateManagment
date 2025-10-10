@@ -15,8 +15,10 @@ namespace ServicesGateManagment.Shared.Models.Mapping
     {
         public Mapping()
         {
+            
             CreateMap<VehicleInquireRequestJson, VehicleInquireRequestJsonVM>();
-            CreateMap<RegisteUserDto, User>();
+            CreateMap<RegisteUserDto, User>()
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => PasswordHelper.HashPassword(src.Password)));
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
             CreateMap<UpdateUserDto, User>();

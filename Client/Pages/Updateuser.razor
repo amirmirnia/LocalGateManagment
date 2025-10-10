@@ -1,7 +1,6 @@
 ﻿@page "/Updateuser/{Id}"
 @inherits AppComponentBase
-@attribute [Authorize]
-
+@attribute [Authorize(Roles = "Admin,Manager")]
 
 <div class="container mt-4">
     <div class="row">
@@ -113,11 +112,20 @@
                     LastName = User.LastName,
                     Role = User.Role,
                     Id = User.Id
-                    
-            };
-            await _User.UpdateUser(UpdateUser);
 
-            AlertService.Show($"کاربر {User.FirstName} {User.LastName} با موفقیت ویرایش شد!");
+            };
+            if (await _User.UpdateUser(UpdateUser))
+            {
+                AlertService.Show($"کاربر {User.FirstName} {User.LastName} با موفقیت ویرایش شد!");
+                await Task.Delay(2000);
+                AuthStateProvider.NotifyUserLogout();
+                NavManager.NavigateTo("/login");
+            }
+            else
+            {
+                errorMessage=$"خطا در ویرایش کاربر";
+            }
+
         }
         catch (Exception ex)
         {

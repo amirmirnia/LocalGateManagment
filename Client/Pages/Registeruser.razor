@@ -1,6 +1,6 @@
 ﻿@page "/Registeruser"
 @inherits AppComponentBase
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin,Manager")]
 
 <div class="container mt-4">
     <div class="row">

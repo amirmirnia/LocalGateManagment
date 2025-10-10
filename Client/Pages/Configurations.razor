@@ -1,7 +1,6 @@
 ﻿@page "/configurations"
 @inherits AppComponentBase
-@attribute [Authorize]
-
+@attribute [Authorize(Roles = "Admin,Manager")]
 
 <PageTitle>مدیریت سرویس ها</PageTitle>
 

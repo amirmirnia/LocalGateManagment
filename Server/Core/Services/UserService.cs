@@ -4,6 +4,7 @@ using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ServicesGateManagment.Client.Pages;
 using ServicesGateManagment.Server.Handlers;
 using ServicesGateManagment.Shared;
 using ServicesGateManagment.Shared.DBContext;
@@ -138,5 +139,50 @@ public class UserService : IUser
 
             return false;
         }
+    }
+
+    public async Task<User> GetUser(LoginDto user)
+    {
+        try
+        {
+            // جستجو بر اساس ایمیل
+            var dbUser = await _db.Users.FirstOrDefaultAsync(p => p.Email == user.Username);
+
+            // اگر کاربری پیدا شد، بررسی پسورد
+            if (dbUser != null && PasswordHelper.VerifyPassword(user.Password, dbUser.Password))
+            {
+                return dbUser;
+            }
+
+            return null;
+        }
+        catch (Exception)
+        {
+
+            return null;
+        }
+    }
+
+    public async Task<bool> ChangePassword(ChangePasswordDto PasswordModel)
+    {
+        try
+        {
+            var user = _db.Users.FirstOrDefault(p => p.Id == PasswordModel.UserId);
+            if (user != null)
+            {
+                user.Password = PasswordHelper.HashPassword(PasswordModel.NewPassword);
+                _db.Attach(user);
+                _db.Entry(user).State = EntityState.Modified;
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+        catch (Exception)
+        {
+
+            return false;
+        }
+
     }
 }

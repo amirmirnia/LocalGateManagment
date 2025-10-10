@@ -24,17 +24,35 @@ namespace ServicesGateManagment.Server.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDto request)
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
-            if (request.Username == "Admin" && request.Password == "Qazwqazw@mir01")
+            var user =await _User.GetUser(request);
+            if (user!=null)
             {
-                var token = _tokenService.GenerateToken(request.Username);
+                var token = _tokenService.GenerateToken(user.Email,user.Role.ToString(),user.FirstName);
                 return Ok(new { Token = token });
             }
 
-
-
             return Unauthorized();
+
+
+
+
+        }
+        [HttpPost("ChangePassword")]
+        public IActionResult ChangePassword([FromBody] ChangePasswordDto ChangePasswordDto)
+        {
+
+            try
+            {
+                _User.ChangePassword(ChangePasswordDto);
+                return Ok();
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
         }
 
         [HttpPost("RegisterUser")]

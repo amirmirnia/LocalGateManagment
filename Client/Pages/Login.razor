@@ -56,7 +56,10 @@
                 AuthStateProvider.NotifyUserAuthentication(token);
                 NavManager.NavigateTo("/", forceLoad: true);
             }
-
+            else
+            {
+                message = "ورود با مشکل مواجه شد";
+            }
         }
         catch (Exception ex)
         {

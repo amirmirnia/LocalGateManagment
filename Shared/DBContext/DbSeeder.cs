@@ -16,7 +16,7 @@ namespace ServicesGateManagment.Shared.DBContext
                     FirstName = "ادمین",
                     LastName = "اصلی",
                     Email = "admin@example.com",
-                    Password = "Admin123!", // هش شود در عمل
+                    Password = PasswordHelper.HashPassword("Admin123!"), // هش شود در عمل
                     Role = UserRole.Admin,
                     CreatedUtc = DateTime.UtcNow,
                     LastModifiedUtc = DateTime.UtcNow

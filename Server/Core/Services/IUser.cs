@@ -11,4 +11,6 @@ public interface IUser
     Task<UserDto> GetUserById(int id);
     Task<bool> DeleteUser(int id);
     Task<bool> UpdateUser(User user);
+    Task<User> GetUser(LoginDto user);
+    Task<bool> ChangePassword(ChangePasswordDto PasswordModel);
 }

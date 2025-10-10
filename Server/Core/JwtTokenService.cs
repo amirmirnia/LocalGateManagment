@@ -14,12 +14,13 @@ namespace ServicesGateManagment.Server.Core
             _config = config;
         }
 
-        public string GenerateToken(string username)
+        public string GenerateToken(string username,string Role,string name)
         {
             var claims = new[]
             {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, "User")
+            new Claim(ClaimTypes.Name, name),
+            new Claim(ClaimTypes.Email, username),
+            new Claim(ClaimTypes.Role, Role)
         };
 
             var key = new SymmetricSecurityKey(
