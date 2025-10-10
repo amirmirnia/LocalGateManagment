@@ -19,6 +19,7 @@ namespace ServicesGateManagment.Shared.Models.ViewModel.User
 
         public string Email { get; set; }
 
+        [MinLength(6, ErrorMessage = "پسورد باید حداقل ۶ کاراکتر باشد")]
         public string Password { get; set; }
 
         public UserRole Role { get; set; }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServicesGateManagment.Server.Core;
 using ServicesGateManagment.Shared.Models.Users;
@@ -39,14 +40,21 @@ namespace ServicesGateManagment.Server.Controllers
 
 
         }
+        [Authorize]
+        [HttpGet("test")]
+        public IActionResult Test()
+        {
+            return Ok(new { message = "You are authorized!" });
+        }
+        [Authorize]
         [HttpPost("ChangePassword")]
-        public IActionResult ChangePassword([FromBody] ChangePasswordDto ChangePasswordDto)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto ChangePasswordDto)
         {
 
             try
             {
-                _User.ChangePassword(ChangePasswordDto);
-                return Ok();
+               await _User.ChangePassword(ChangePasswordDto);
+                return Ok(true);
             }
             catch (Exception)
             {

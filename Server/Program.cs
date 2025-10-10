@@ -28,11 +28,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://localhost:7012") // دامنه Blazor
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
+
 
 // Add HttpClient service
 builder.Services.AddHttpClient("ApiClient", client =>
@@ -55,12 +56,17 @@ builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddHostedService<DataFetcherBackgroundService>();
 builder.Services.AddHostedService<NetworkCheckBackgroundService>();
 
+builder.Services.AddLogging(logging =>
+{
+    logging.AddConsole();
+});
 
 
 // اضافه کردن Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -70,7 +76,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            ClockSkew = TimeSpan.FromMinutes(5)
         };
     });
 
@@ -107,17 +114,14 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-
 app.UseRouting();
 app.UseCors("AllowBlazorClient");
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
-
 app.Run();

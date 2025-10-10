@@ -14,7 +14,7 @@ namespace ServicesGateManagment.Server.Core
             _config = config;
         }
 
-        public string GenerateToken(string username,string Role,string name)
+        public string GenerateToken(string username, string Role, string name)
         {
             var claims = new[]
             {

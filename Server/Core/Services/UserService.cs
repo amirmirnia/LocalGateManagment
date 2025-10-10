@@ -49,7 +49,7 @@ public class UserService : IUser
     {
         try
         {
-            var listuser =  _db.Users.ToListAsync().Result;
+            var listuser = _db.Users.ToListAsync().Result;
 
             var finalmodel = _mapper.Map<List<UserDto>>(listuser);
 
@@ -93,8 +93,8 @@ public class UserService : IUser
     {
         try
         {
-            var user = _db.Users.FirstOrDefault(p=>p.Id==id);
-            if (user!=null)
+            var user = _db.Users.FirstOrDefault(p => p.Id == id);
+            if (user != null)
             {
                 if (user.Role != UserRole.Admin)
                 {
